@@ -104,6 +104,50 @@ function decompressBuffer(buf, contentEncoding = '') {
 }
 
 // Live Vidio Token Resolver Cache
+// Official RCTI+ Toutatis Token Resolver (RCTI, MNCTV, GTV, iNews)
+let cachedRctiVisitorToken = null;
+let cachedRctiVisitorExp = 0;
+
+async function getRctiVisitorToken() {
+  if (cachedRctiVisitorToken && Date.now() < cachedRctiVisitorExp) {
+    return cachedRctiVisitorToken;
+  }
+  const { res } = await fetchRemote('https://www.rctiplus.com/tv/rcti', {
+    Referer: 'https://www.rctiplus.com/'
+  });
+  const html = (await readStreamBuffer(res, res.headers['content-encoding'])).toString('utf8');
+  const match = html.match(/var\s+visitorsToken\s*=\s*"([^"]+)"/);
+  if (!match) throw new Error('visitorsToken not found on rctiplus.com');
+  cachedRctiVisitorToken = match[1];
+  cachedRctiVisitorExp = Date.now() + 1800 * 1000;
+  return cachedRctiVisitorToken;
+}
+
+async function resolveRctiPlusHlsUrl(channelId = '1', attempt = 0) {
+  try {
+    const token = await getRctiVisitorToken();
+    const { res } = await fetchRemote(
+      `https://toutatis.rctiplus.com/video/live/api/v1/live/${channelId}/url?appierid=`,
+      {
+        Authorization: token,
+        apikey: 'k1DzR0yYWIyZgvTvixiDHnb4Nl08wSU0',
+        Origin: 'https://www.rctiplus.com',
+        Referer: 'https://www.rctiplus.com/'
+      }
+    );
+    const json = JSON.parse((await readStreamBuffer(res, res.headers['content-encoding'])).toString('utf8'));
+    const hlsUrl = json?.data?.url;
+    if (!hlsUrl) throw new Error(`No stream URL returned for RCTI+ channel ${channelId}`);
+    return hlsUrl;
+  } catch (err) {
+    if (attempt < 1) {
+      cachedRctiVisitorToken = null;
+      return resolveRctiPlusHlsUrl(channelId, attempt + 1);
+    }
+    throw err;
+  }
+}
+
 let cachedVidioApiKey = null;
 let cachedVidioCookies = '';
 let cachedVidioApiKeyExp = 0;
@@ -259,6 +303,34 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     return res.end();
+  }
+
+  // 0a. Official RCTI+ Live Resolver (1=RCTI, 2=MNCTV, 3=GTV, 4=iNews)
+  if (reqUrl.pathname === '/api/rctiplus') {
+    const chId = reqUrl.searchParams.get('id') || '1';
+    try {
+      const hlsUrl = await resolveRctiPlusHlsUrl(chId);
+      const ref = 'https://www.rctiplus.com/';
+      const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)';
+      const { res: remoteRes, finalUrl } = await fetchRemote(hlsUrl, {
+        Referer: ref,
+        'User-Agent': ua
+      });
+      const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
+      const rawText = rawBuf.toString('utf8');
+      const proto = req.headers['x-forwarded-proto'] || 'http';
+      const hostPrefix =
+        req.headers.host && !req.headers.host.startsWith('localhost') ? `${proto}://${req.headers.host}` : '';
+      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      });
+      return res.end(rewritten);
+    } catch (err) {
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: err.message }));
+    }
   }
 
   // 0. Custom Vidio Embed Unblocker Page (Runs in User's Browser with Indonesian IP & Spoofs ancestorOrigins/referrer)

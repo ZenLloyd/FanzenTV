@@ -1,6 +1,40 @@
 // Curated Core Indonesian TV Channels (100% Cloud-Ready 24/7 on Vercel + Auto-Fallback)
 const DEFAULT_CHANNELS = [
   {
+    id: 'rcti-hd',
+    name: 'RCTI HD',
+    category: 'Nasional',
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/RCTI_logo_2015.svg/512px-RCTI_logo_2015.svg.png',
+    url: '/api/rctiplus?id=1',
+    directLocal: false,
+    subtitle: 'Siaran Resmi RCTI • Timnas Indonesia • MasterChef • Sinetron'
+  },
+  {
+    id: 'mnctv-hd',
+    name: 'MNCTV HD',
+    category: 'Nasional',
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/MNCTV_logo_2015.svg/512px-MNCTV_logo_2015.svg.png',
+    url: '/api/rctiplus?id=2',
+    backupUrl: 'https://linier-mnctv.rctiplus.id/mnctv-sdi.m3u8',
+    ref: 'https://www.rctiplus.com/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Siaran Resmi MNCTV • Upin & Ipin • Family 100 • Liga Futsal'
+  },
+  {
+    id: 'gtv-hd',
+    name: 'GTV HD',
+    category: 'Nasional',
+    quality: '720p',
+    logo: 'https://i.imgur.com/jjuKnYs.png',
+    url: '/api/rctiplus?id=3',
+    backupUrl: 'https://linier-gtv.rctiplus.id/gtv-sdi.m3u8',
+    ref: 'https://www.rctiplus.com/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
+  },
+  {
     id: 'trans7-hd',
     name: 'Trans7 HD',
     category: 'Nasional',
@@ -21,29 +55,6 @@ const DEFAULT_CHANNELS = [
     ref: 'https://www.cnbcindonesia.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
     subtitle: 'Siaran Resmi Trans TV • Bioskop Trans TV • Brownis'
-  },
-  {
-    id: 'mnctv-hd',
-    name: 'MNCTV HD',
-    category: 'Nasional',
-    quality: '720p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/MNCTV_logo_2015.svg/512px-MNCTV_logo_2015.svg.png',
-    url: 'https://linier-mnctv.rctiplus.id/mnctv-sdi.m3u8',
-    ref: 'https://www.rctiplus.com/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi MNCTV • Upin & Ipin • Family 100 • Liga Futsal'
-  },
-  {
-    id: 'gtv-hd',
-    name: 'GTV HD',
-    category: 'Nasional',
-    quality: '720p',
-    logo: 'https://i.imgur.com/jjuKnYs.png',
-    url: 'https://linier-gtv.rctiplus.id/gtv-sdi.m3u8',
-    backupUrl: 'https://linier-gtv.rctiplus.id/gtv-sdi-avc1_1000000=7-mp4a_96000=1.m3u8',
-    ref: 'https://www.rctiplus.com/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
   },
   {
     id: 'mdtv-net-hd',
