@@ -62,8 +62,14 @@ function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 
     const req = client.request(options, (res) => {
       if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
         const nextUrl = new URL(res.headers.location, targetUrl).toString();
+        const nextHeaders = { ...customHeaders };
+        const setCookies = res.headers['set-cookie'];
+        if (setCookies && setCookies.length) {
+          const cookieStr = setCookies.map((c) => c.split(';')[0]).join('; ');
+          nextHeaders['Cookie'] = nextHeaders['Cookie'] ? `${nextHeaders['Cookie']}; ${cookieStr}` : cookieStr;
+        }
         res.resume();
-        return resolve(fetchRemote(nextUrl, customHeaders, redirectCount + 1, method));
+        return resolve(fetchRemote(nextUrl, nextHeaders, redirectCount + 1, method, clientIp));
       }
       resolve({ res, finalUrl: targetUrl });
     });
@@ -261,7 +267,7 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
   }
 }
 
-function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '') {
+function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '', cookie = '') {
   const lines = content.split(/\r?\n/);
   const buildProxyUrl = (rawTarget) => {
     const trimmedTarget = rawTarget.trim();
@@ -276,6 +282,7 @@ function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '') {
     params.set('url', absUrl);
     if (ua) params.set('ua', ua);
     if (ref) params.set('ref', ref);
+    if (cookie) params.set('ck', cookie);
     return `${hostPrefix}/api/proxy?${params.toString()}`;
   };
 
@@ -316,12 +323,14 @@ const server = http.createServer(async (req, res) => {
         Referer: ref,
         'User-Agent': ua
       });
+      const setCookies = remoteRes.headers['set-cookie'] || [];
+      const ck = setCookies.map((c) => c.split(';')[0]).join('; ');
       const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
       const rawText = rawBuf.toString('utf8');
       const proto = req.headers['x-forwarded-proto'] || 'http';
       const hostPrefix =
         req.headers.host && !req.headers.host.startsWith('localhost') ? `${proto}://${req.headers.host}` : '';
-      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
+      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix, ck);
       res.writeHead(200, {
         'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
         'Cache-Control': 'no-cache, no-store, must-revalidate'
@@ -457,6 +466,7 @@ const server = http.createServer(async (req, res) => {
     const targetUrl = reqUrl.searchParams.get('url');
     const ua = reqUrl.searchParams.get('ua') || '';
     const ref = reqUrl.searchParams.get('ref') || '';
+    const ck = reqUrl.searchParams.get('ck') || '';
 
     if (!targetUrl) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -467,8 +477,13 @@ const server = http.createServer(async (req, res) => {
       const customHeaders = {};
       if (ua) customHeaders['User-Agent'] = ua;
       if (ref) customHeaders['Referer'] = ref;
+      if (ck) customHeaders['Cookie'] = ck;
 
       const { res: remoteRes, finalUrl } = await fetchRemote(targetUrl, customHeaders);
+      const nextCookies = remoteRes.headers['set-cookie'] || [];
+      const mergedCk = nextCookies.length
+        ? [ck, ...nextCookies.map((c) => c.split(';')[0])].filter(Boolean).join('; ')
+        : ck;
       const statusCode = remoteRes.statusCode || 200;
       const contentType = (remoteRes.headers['content-type'] || '').toLowerCase();
       const contentEncoding = remoteRes.headers['content-encoding'] || '';
