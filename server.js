@@ -261,6 +261,80 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
+  // 0. Custom Vidio Embed Unblocker Page (Runs in User's Browser with Indonesian IP & Spoofs ancestorOrigins/referrer)
+  if (reqUrl.pathname === '/api/embed') {
+    const slug = reqUrl.searchParams.get('id');
+    if (!slug) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      return res.end('Missing id');
+    }
+    try {
+      const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
+        Referer: 'https://www.vidio.com/'
+      });
+      let html = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
+
+      // Rewrite relative root assets (/manifest.webmanifest, /favicon.ico) to https://www.vidio.com
+      html = html.replace(/href="\/(manifest|favicon)/g, 'href="https://www.vidio.com/$1');
+
+      const bypassScript = `<script>
+(function() {
+  try {
+    Object.defineProperty(document, 'referrer', { get: function() { return 'https://www.vidio.com/'; } });
+    if (window.Location && Location.prototype) {
+      Object.defineProperty(Location.prototype, 'ancestorOrigins', {
+        get: function() { return ['https://www.vidio.com']; }
+      });
+    }
+  } catch (e) {}
+
+  var origFetch = window.fetch;
+  window.fetch = function(input, init) {
+    var url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+    if (url.indexOf('/auth') === 0) {
+      url = 'https://www.vidio.com/auth';
+      input = url;
+    } else if (url.indexOf('/') === 0 && url.indexOf('//') !== 0) {
+      url = 'https://www.vidio.com' + url;
+      input = url;
+    }
+    if (url.indexOf('embed_eligibility') !== -1) {
+      var idMatch = url.match(/livestreamings\\/([^/?]+)/);
+      var cid = idMatch ? parseInt(idMatch[1], 10) : 205;
+      var fakeResp = {
+        data: {
+          id: String(cid),
+          type: 'embed_eligibility',
+          attributes: {
+            whitelisted: true,
+            content_found: true,
+            content_id: cid,
+            original_content_id: cid
+          }
+        }
+      };
+      return Promise.resolve(new Response(JSON.stringify(fakeResp), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }));
+    }
+    return origFetch.call(this, input, init);
+  };
+})();
+</script>`;
+
+      html = html.replace('<head>', '<head>' + bypassScript);
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      });
+      return res.end(html);
+    } catch (err) {
+      res.writeHead(502, { 'Content-Type': 'text/plain' });
+      return res.end('Embed error: ' + err.message);
+    }
+  }
+
   // Real-time Official Vidio Live HLS Resolver (Indosiar, SCTV, ANTV, Mentari TV, RTV, NET, Metro TV)
   if (reqUrl.pathname === '/api/vidio' || reqUrl.pathname === '/api/live' || reqUrl.pathname === '/api/index.js') {
     const slug = reqUrl.searchParams.get('id');

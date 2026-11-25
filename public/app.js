@@ -126,6 +126,18 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
   },
   {
+    id: 'kompas-tv-hd',
+    name: 'Kompas TV',
+    category: 'News',
+    quality: 'HD',
+    logo: 'https://i.imgur.com/bD6UHeZ.png',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/s/s104/01.m3u8',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/s/s104/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran Resmi Kompas TV • Independen Terpercaya'
+  },
+  {
     id: 'inews-hd',
     name: 'iNews TV HD',
     category: 'News',
