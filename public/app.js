@@ -587,16 +587,7 @@ async function playChannel(channel) {
 
   showOverlay(`Menghubungkan ke ${channel.name}...`, false);
 
-  const isCloudHost =
-    window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app');
-
-  // If running on Vercel cloud (24/7 even when laptop is off) and channel is a Vidio Indonesia-only stream,
-  // play directly inside the browser using the user's own Indonesian IP via official clean player embed!
-  if (isCloudHost && channel.directLocal && channel.vidioEmbedUrl) {
-    mountEmbedIframe(channel.vidioEmbedUrl);
-    return;
-  }
-
+  // Always use native HLS player (no Vidio iframe block!)
   let streamUrl = buildStreamUrl(channel);
 
   if (hlsInstance) {

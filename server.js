@@ -105,6 +105,7 @@ function decompressBuffer(buf, contentEncoding = '') {
 
 // Live Vidio Token Resolver Cache
 let cachedVidioApiKey = null;
+let cachedVidioCookies = '';
 let cachedVidioApiKeyExp = 0;
 
 function encryptVidioApiKey(rawKey) {
@@ -114,12 +115,12 @@ function encryptVidioApiKey(rawKey) {
   return cipher.update(rawKey, 'utf-8', 'base64') + cipher.final('base64');
 }
 
-async function getVidioEncryptedApiKey() {
+async function getVidioAuthSession() {
   if (cachedVidioApiKey && Date.now() < cachedVidioApiKeyExp) {
-    return cachedVidioApiKey;
+    return { encryptedKey: cachedVidioApiKey, cookieHeader: cachedVidioCookies };
   }
   const { res } = await fetchRemote(
-    'https://api.vidio.com/auth',
+    'https://www.vidio.com/auth',
     {
       Origin: 'https://www.vidio.com',
       Referer: 'https://www.vidio.com/'
@@ -127,21 +128,33 @@ async function getVidioEncryptedApiKey() {
     0,
     'POST'
   );
+  const setCookies = res.headers['set-cookie'] || [];
+  const cookieParts = setCookies.map((c) => c.split(';')[0]).filter(Boolean);
+  if (!cookieParts.some((c) => c.startsWith('country_id='))) {
+    cookieParts.unshift('country_id=ID');
+  } else {
+    for (let i = 0; i < cookieParts.length; i++) {
+      if (cookieParts[i].startsWith('country_id=')) cookieParts[i] = 'country_id=ID';
+    }
+  }
+  cachedVidioCookies = cookieParts.join('; ');
+
   const buf = await readStreamBuffer(res, res.headers['content-encoding']);
   const data = JSON.parse(buf.toString('utf8'));
   if (!data.api_key) throw new Error('Failed to obtain Vidio API key');
   cachedVidioApiKey = encryptVidioApiKey(data.api_key);
   cachedVidioApiKeyExp = Date.now() + 3600 * 1000;
-  return cachedVidioApiKey;
+  return { encryptedKey: cachedVidioApiKey, cookieHeader: cachedVidioCookies };
 }
 
 async function resolveVidioHlsUrl(slug, attempt = 0) {
   try {
     const id = parseInt(slug, 10);
-    const encryptedKey = await getVidioEncryptedApiKey();
+    const { encryptedKey, cookieHeader } = await getVidioAuthSession();
 
     const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
-      Referer: 'https://www.vidio.com/'
+      Referer: 'https://www.vidio.com/',
+      Cookie: cookieHeader
     });
     const embedHtml = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
     const sigMatch = embedHtml.match(
@@ -153,21 +166,42 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
     const [, clientId, signature] = sigMatch;
 
     const { res: streamRes } = await fetchRemote(
-      `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
+      `https://www.vidio.com/api/livestreamings/${id}/stream?initialize=true`,
       {
         Origin: 'https://www.vidio.com',
-        Referer: 'https://www.vidio.com/',
+        Referer: `https://www.vidio.com/live/${slug}/embed`,
+        Cookie: cookieHeader,
         'X-Api-Key': encryptedKey,
         'X-Secure-Level': '2',
-        'X-API-Platform': 'web-desktop',
+        'X-API-Platform': 'embed-web',
         'X-Signature': signature,
         'X-Client': clientId,
         'X-Requested-With': 'vidio-next'
       }
     );
-    const streamJson = JSON.parse(
-      (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8')
-    );
+    let streamText = (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8');
+    let streamJson;
+    try {
+      streamJson = JSON.parse(streamText);
+    } catch (_) {
+      // Fallback to api.vidio.com with cookieHeader
+      const { res: apiRes } = await fetchRemote(
+        `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
+        {
+          Origin: 'https://www.vidio.com',
+          Referer: `https://www.vidio.com/live/${slug}/embed`,
+          Cookie: cookieHeader,
+          'X-Api-Key': encryptedKey,
+          'X-Secure-Level': '2',
+          'X-API-Platform': 'web-desktop',
+          'X-Signature': signature,
+          'X-Client': clientId,
+          'X-Requested-With': 'vidio-next'
+        }
+      );
+      streamText = (await readStreamBuffer(apiRes, apiRes.headers['content-encoding'])).toString('utf8');
+      streamJson = JSON.parse(streamText);
+    }
     const hlsUrl = streamJson?.data?.attributes?.hls;
     if (!hlsUrl) {
       const errTitle = streamJson?.errors?.[0]?.title || 'unavailable';
@@ -176,6 +210,7 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
     return hlsUrl;
   } catch (err) {
     if (attempt < 1 && /ECONNRESET|timeout|ETIMEDOUT/i.test(err.message)) {
+      cachedVidioApiKey = null;
       return resolveVidioHlsUrl(slug, attempt + 1);
     }
     throw err;
