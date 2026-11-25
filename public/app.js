@@ -1,46 +1,5 @@
-// Curated Core Indonesian TV Channels (100% Verified Official Live Streams & Exact Channel Mapping)
+// Curated Core Indonesian TV Channels (100% Cloud-Ready 24/7 on Vercel + Auto-Fallback)
 const DEFAULT_CHANNELS = [
-  {
-    id: 'indosiar-hd',
-    name: 'Indosiar FHD',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Indosiar_2015.svg/512px-Indosiar_2015.svg.png',
-    url: '/api/vidio?id=205-indosiar',
-    directLocal: true,
-    subtitle: 'Siaran Resmi Indosiar • Liga 1 • Mega Series • D’Academy'
-  },
-  {
-    id: 'sctv-hd',
-    name: 'SCTV FHD',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/EMmOvnQ.png',
-    url: '/api/vidio?id=204-sctv',
-    directLocal: true,
-    subtitle: 'Siaran Resmi SCTV • Satu Untuk Semua • Sinetron & FTV'
-  },
-  {
-    id: 'antv-hd',
-    name: 'ANTV FHD',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
-    url: '/api/vidio?id=782-antv',
-    directLocal: true,
-    subtitle: 'Siaran Resmi ANTV • Mega Bollywood • Sinema Laga & Horor'
-  },
-  {
-    id: 'gtv-hd',
-    name: 'GTV HD',
-    category: 'Nasional',
-    quality: '720p',
-    logo: 'https://i.imgur.com/jjuKnYs.png',
-    url: 'https://linier-gtv.rctiplus.id/gtv-sdi-avc1_1000000=7-mp4a_96000=1.m3u8',
-    ref: 'https://www.rctiplus.com/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
-  },
   {
     id: 'trans7-hd',
     name: 'Trans7 HD',
@@ -64,40 +23,39 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran Resmi Trans TV • Bioskop Trans TV • Brownis'
   },
   {
-    id: 'mdtv-net-hd',
-    name: 'MDTV / NET. FHD',
+    id: 'gtv-hd',
+    name: 'GTV HD',
     category: 'Nasional',
-    quality: '1080p',
+    quality: '720p',
+    logo: 'https://i.imgur.com/jjuKnYs.png',
+    url: 'https://linier-gtv.rctiplus.id/gtv-sdi-avc1_1000000=7-mp4a_96000=1.m3u8',
+    ref: 'https://www.rctiplus.com/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
+  },
+  {
+    id: 'mdtv-net-hd',
+    name: 'MDTV / NET. HD',
+    category: 'Nasional',
+    quality: 'HD',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MDTV_logo.svg/512px-MDTV_logo.svg.png',
-    url: '/api/vidio?id=875-mdtv',
-    directLocal: true,
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/01.m3u8',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h223/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi MDTV / NET. • Drama & Hiburan Keluarga'
   },
   {
     id: 'rtv-hd',
-    name: 'RTV (Rajawali TV) FHD',
+    name: 'RTV (Rajawali TV) HD',
     category: 'Nasional',
-    quality: '1080p',
+    quality: 'HD',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/RTV_Indonesia_logo.svg/512px-RTV_Indonesia_logo.svg.png',
-    url: '/api/vidio?id=1561-rtv',
-    directLocal: true,
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h10/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi RTV • Kartun Anak • Anime & Tokusatsu'
-  },
-  {
-    id: 'mentari-tv',
-    name: 'Mentari TV FHD',
-    category: 'Entertainment',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
-    url: '/api/vidio?id=8237-mentari-tv',
-    directLocal: true,
-    subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
   },
   {
     id: 'moji-hd',
@@ -112,6 +70,50 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran Resmi MOJI • Voli Proliga • VNL & Olahraga'
   },
   {
+    id: 'indosiar-hd',
+    name: 'Indosiar FHD',
+    category: 'Nasional',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Indosiar_2015.svg/512px-Indosiar_2015.svg.png',
+    url: '/api/vidio?id=205-indosiar',
+    directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/205-indosiar/embed?autoplay=true&player_only=true&mute=false',
+    subtitle: 'Siaran Resmi Indosiar • Liga 1 • Mega Series • D’Academy'
+  },
+  {
+    id: 'sctv-hd',
+    name: 'SCTV FHD',
+    category: 'Nasional',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/EMmOvnQ.png',
+    url: '/api/vidio?id=204-sctv',
+    directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/204-sctv/embed?autoplay=true&player_only=true&mute=false',
+    subtitle: 'Siaran Resmi SCTV • Satu Untuk Semua • Sinetron & FTV'
+  },
+  {
+    id: 'antv-hd',
+    name: 'ANTV FHD',
+    category: 'Nasional',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
+    url: '/api/vidio?id=782-antv',
+    directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/782-antv/embed?autoplay=true&player_only=true&mute=false',
+    subtitle: 'Siaran Resmi ANTV • Mega Bollywood • Sinema Laga & Horor'
+  },
+  {
+    id: 'mentari-tv',
+    name: 'Mentari TV FHD',
+    category: 'Entertainment',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
+    url: '/api/vidio?id=8237-mentari-tv',
+    directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/8237-mentari-tv/embed?autoplay=true&player_only=true&mute=false',
+    subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
+  },
+  {
     id: 'inews-hd',
     name: 'iNews TV HD',
     category: 'News',
@@ -124,26 +126,24 @@ const DEFAULT_CHANNELS = [
   },
   {
     id: 'metrotv-hd',
-    name: 'Metro TV FHD',
+    name: 'Metro TV HD',
     category: 'News',
-    quality: '1080p',
+    quality: 'HD',
     logo: 'https://i.imgur.com/QnU70NI.png',
-    url: '/api/vidio?id=777-metro-tv',
-    directLocal: true,
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/01.m3u8',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h12/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Metro TV • Knowledge to Elevate'
   },
   {
     id: 'tvone-hd',
-    name: 'tvOne FHD',
+    name: 'tvOne HD',
     category: 'News',
-    quality: '1080p',
+    quality: 'HD',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TvOne_2023.svg/512px-TvOne_2023.svg.png',
-    url: '/api/vidio?id=783-tvone',
-    directLocal: true,
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h40/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi tvOne • Apa Kabar Indonesia'
@@ -156,6 +156,7 @@ const DEFAULT_CHANNELS = [
     logo: 'https://i.postimg.cc/6pycF7Vx/300px-IDTV.png',
     url: '/api/vidio?id=18280-berita-satu',
     directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/18280-berita-satu/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Siaran Resmi BeritaSatu • News & Talkshow Nasional'
   },
   {
@@ -254,6 +255,7 @@ const DEFAULT_CHANNELS = [
     logo: 'https://thumbor.prod.vidiocdn.com/eG5n4xS9H9bN8t_q3tI6e5T1w-A=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/c43934.png',
     url: '/api/vidio?id=19046-sin-po-tv',
     directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/19046-sin-po-tv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Siaran Resmi Sin Po TV • Berita, Budaya & Hiburan'
   },
   {
@@ -264,6 +266,7 @@ const DEFAULT_CHANNELS = [
     logo: 'https://i.imgur.com/xyLLLOi.png',
     url: '/api/vidio?id=5415-jaktv',
     directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/5415-jaktv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Siaran Resmi JakTV • Dari Jakarta Untuk Indonesia'
   },
   {
@@ -307,6 +310,7 @@ const DEFAULT_CHANNELS = [
     logo: 'https://i.imgur.com/JXjbUhB.png',
     url: '/api/vidio?id=7464-ajwa-tv',
     directLocal: true,
+    vidioEmbedUrl: 'https://www.vidio.com/live/7464-ajwa-tv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Cermin Indahnya Islam • Siaran Religi'
   },
   {
@@ -527,6 +531,30 @@ function updateNowPlayingUI(channel) {
   }
 }
 
+function clearEmbedIframe() {
+  const existing = document.getElementById('vidioEmbedFrame');
+  if (existing) existing.remove();
+  videoPlayer.classList.remove('hidden');
+}
+
+function mountEmbedIframe(embedUrl) {
+  clearEmbedIframe();
+  hideOverlay();
+  if (hlsInstance) {
+    hlsInstance.destroy();
+    hlsInstance = null;
+  }
+  videoPlayer.pause();
+  videoPlayer.classList.add('hidden');
+  const iframe = document.createElement('iframe');
+  iframe.id = 'vidioEmbedFrame';
+  iframe.src = embedUrl;
+  iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.style.cssText = 'width:100%;height:100%;border:0;background:#000;';
+  document.getElementById('videoWrapper').appendChild(iframe);
+}
+
 async function playChannel(channel) {
   if (!channel) return;
   currentChannel = channel;
@@ -534,6 +562,7 @@ async function playChannel(channel) {
 
   updateNowPlayingUI(channel);
   renderChannelList();
+  clearEmbedIframe();
 
   // Scroll active card into view
   setTimeout(() => {
@@ -545,14 +574,17 @@ async function playChannel(channel) {
 
   showOverlay(`Menghubungkan ke ${channel.name}...`, false);
 
-  let streamUrl = buildStreamUrl(channel);
-  // When running on Vercel (.now / .vercel.app), route Vidio channels through the Indonesian tunnel gateway so they aren't geo-blocked
-  if (
-    channel.directLocal &&
-    (window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app'))
-  ) {
-    streamUrl = `https://attractions-comprehensive-signed-heavily.trycloudflare.com${channel.url}`;
+  const isCloudHost =
+    window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app');
+
+  // If running on Vercel cloud (24/7 even when laptop is off) and channel is a Vidio Indonesia-only stream,
+  // play directly inside the browser using the user's own Indonesian IP via official clean player embed!
+  if (isCloudHost && channel.directLocal && channel.vidioEmbedUrl) {
+    mountEmbedIframe(channel.vidioEmbedUrl);
+    return;
   }
+
+  let streamUrl = buildStreamUrl(channel);
 
   if (hlsInstance) {
     hlsInstance.destroy();
