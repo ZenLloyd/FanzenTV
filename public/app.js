@@ -551,7 +551,7 @@ async function playChannel(channel) {
     channel.directLocal &&
     (window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app'))
   ) {
-    streamUrl = `https://handmade-knives-nyc-rangers.trycloudflare.com${channel.url}`;
+    streamUrl = `https://attractions-comprehensive-signed-heavily.trycloudflare.com${channel.url}`;
   }
 
   if (hlsInstance) {

@@ -135,43 +135,51 @@ async function getVidioEncryptedApiKey() {
   return cachedVidioApiKey;
 }
 
-async function resolveVidioHlsUrl(slug) {
-  const id = parseInt(slug, 10);
-  const encryptedKey = await getVidioEncryptedApiKey();
+async function resolveVidioHlsUrl(slug, attempt = 0) {
+  try {
+    const id = parseInt(slug, 10);
+    const encryptedKey = await getVidioEncryptedApiKey();
 
-  const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
-    Referer: 'https://www.vidio.com/'
-  });
-  const embedHtml = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
-  const sigMatch = embedHtml.match(
-    /\\"streamSignature\\":\{\\"clientId\\":\\"([^"\\]+)\\",\\"signature\\":\\"([^"\\]+)\\"\}/
-  );
-  if (!sigMatch) {
-    throw new Error(`Signature not found for Vidio channel ${slug}`);
-  }
-  const [, clientId, signature] = sigMatch;
-
-  const { res: streamRes } = await fetchRemote(
-    `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
-    {
-      Origin: 'https://www.vidio.com',
-      Referer: 'https://www.vidio.com/',
-      'X-Api-Key': encryptedKey,
-      'X-Secure-Level': '2',
-      'X-API-Platform': 'web-desktop',
-      'X-Signature': signature,
-      'X-Client': clientId,
-      'X-Requested-With': 'vidio-next'
+    const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
+      Referer: 'https://www.vidio.com/'
+    });
+    const embedHtml = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
+    const sigMatch = embedHtml.match(
+      /\\"streamSignature\\":\{\\"clientId\\":\\"([^"\\]+)\\",\\"signature\\":\\"([^"\\]+)\\"\}/
+    );
+    if (!sigMatch) {
+      throw new Error(`Signature not found for Vidio channel ${slug}`);
     }
-  );
-  const streamJson = JSON.parse(
-    (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8')
-  );
-  const hlsUrl = streamJson?.data?.attributes?.hls;
-  if (!hlsUrl) {
-    throw new Error(`No HLS stream returned for ${slug}`);
+    const [, clientId, signature] = sigMatch;
+
+    const { res: streamRes } = await fetchRemote(
+      `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
+      {
+        Origin: 'https://www.vidio.com',
+        Referer: 'https://www.vidio.com/',
+        'X-Api-Key': encryptedKey,
+        'X-Secure-Level': '2',
+        'X-API-Platform': 'web-desktop',
+        'X-Signature': signature,
+        'X-Client': clientId,
+        'X-Requested-With': 'vidio-next'
+      }
+    );
+    const streamJson = JSON.parse(
+      (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8')
+    );
+    const hlsUrl = streamJson?.data?.attributes?.hls;
+    if (!hlsUrl) {
+      const errTitle = streamJson?.errors?.[0]?.title || 'unavailable';
+      throw new Error(`No HLS stream returned for ${slug} (${errTitle})`);
+    }
+    return hlsUrl;
+  } catch (err) {
+    if (attempt < 1 && /ECONNRESET|timeout|ETIMEDOUT/i.test(err.message)) {
+      return resolveVidioHlsUrl(slug, attempt + 1);
+    }
+    throw err;
   }
-  return hlsUrl;
 }
 
 function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '') {
