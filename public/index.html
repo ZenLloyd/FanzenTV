@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>FazenTV — Live TV Online Indonesia</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header Bar (Clean M3 App Bar on Mobile, Full Toolbar on Desktop) -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <!-- Mobile Hamburger Menu Button (Capstone M3 Pattern) -->
+        <button id="mobileMenuBtn" class="mobile-only-btn" aria-label="Buka Menu Navigasi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
+        <div class="brand">
+          <div class="brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="2" y="6" width="20" height="15" rx="3" />
+              <polyline points="17 2 12 6 7 2" />
+              <polygon points="10 10.5 15.5 13.5 10 16.5" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>Fazen<span>TV</span></h1>
+            <span class="live-pill"><span class="pulse-dot"></span> LIVE IPTV</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Search Bar -->
+      <div class="search-bar" id="searchBarWrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="searchInput" placeholder="Cari channel (Indosiar, ANTV, Trans7, TVRI...)" autocomplete="off" />
+        <button id="clearSearchBtn" class="icon-btn hidden" title="Bersihkan">✕</button>
+      </div>
+
+      <div class="top-actions">
+        <!-- Mobile Search Toggle Button -->
+        <button id="mobileSearchToggleBtn" class="mobile-only-btn" aria-label="Cari Channel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+
+        <button id="proxyToggleBtn" class="action-chip active desktop-only-flex" title="Bypass blokir CORS & Referer server TV">
+          <span class="chip-dot"></span>
+          <span id="proxyStatusText">Smart Proxy: ON</span>
+        </button>
+
+        <button id="loadFullIdBtn" class="btn-secondary desktop-only-flex" title="Muat seluruh 120+ channel publik Indonesia dari id.m3u">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>Full ID (120+ Ch)</span>
+        </button>
+
+        <button id="openPlaylistModalBtn" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          <span class="btn-text-desktop">Playlist M3U</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Expandable Search Drawer -->
+    <div id="mobileSearchBar" class="mobile-search-drawer hidden">
+      <div class="mobile-search-inner">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="mobileSearchInput" placeholder="Ketik nama channel TV..." autocomplete="off" />
+        <button id="closeMobileSearchBtn" class="icon-btn">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Main Content Layout -->
+    <main class="main-layout">
+      <!-- Left / Sticky Top Video Player Section -->
+      <section class="player-section">
+        <div class="video-wrapper" id="videoWrapper">
+          <video id="videoPlayer" playsinline controls crossorigin="anonymous"></video>
+
+          <!-- Overlay Loading / Error / Status -->
+          <div id="playerOverlay" class="player-overlay hidden">
+            <div class="spinner" id="playerSpinner"></div>
+            <p id="overlayMessage">Memuat siaran langsung...</p>
+            <div id="overlayActions" class="overlay-actions hidden">
+              <button id="retryStreamBtn" class="btn-primary btn-sm">Coba Lagi</button>
+              <button id="switchBackupBtn" class="btn-secondary btn-sm">Ganti Mode Proxy</button>
+            </div>
+          </div>
+
+          <!-- Top-left floating channel badge -->
+          <div class="floating-badge" id="floatingBadge">
+            <span class="live-indicator">● LIVE</span>
+            <span id="floatingChannelName">Pilih Channel</span>
+          </div>
+        </div>
+
+        <!-- Now Playing Info & Player Toolbar -->
+        <div class="now-playing-bar">
+          <div class="np-info">
+            <div class="np-logo-box" id="npLogoBox">TV</div>
+            <div class="np-meta">
+              <div class="np-title-row">
+                <h2 id="npTitle">Indosiar FHD</h2>
+                <span class="category-tag" id="npCategory">Nasional</span>
+                <span class="quality-tag" id="npQuality">1080p</span>
+              </div>
+              <p id="npSubtitle">Siaran Resmi Indosiar • Ketuk channel di bawah untuk ganti siaran</p>
+            </div>
+          </div>
+
+          <div class="np-controls">
+            <button id="prevChannelBtn" class="control-btn" title="Channel Sebelumnya (Ch -)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button id="nextChannelBtn" class="control-btn" title="Channel Berikutnya (Ch +)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+            <button id="favCurrentBtn" class="control-btn" title="Simpan ke Favorit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </button>
+            <select id="qualitySelect" class="control-select" title="Pilih Resolusi Video">
+              <option value="-1">Auto HD</option>
+            </select>
+            <button id="aspectBtn" class="control-btn" title="Ubah Rasio Layar (Fit / Fill / 16:9)">
+              <span id="aspectLabel">FIT</span>
+            </button>
+            <button id="pipBtn" class="control-btn" title="Picture-in-Picture (Mini Player)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <rect x="12" y="9" width="8" height="6" rx="1" fill="currentColor" />
+              </svg>
+            </button>
+            <button id="fullscreenBtn" class="control-btn" title="Layar Penuh (F)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right / Bottom Channel Directory Sidebar -->
+      <aside class="directory-section">
+        <div class="directory-header">
+          <div class="dir-title-row">
+            <h3 id="directoryTitle">Semua Channel</h3>
+            <div class="dir-header-right">
+              <!-- View Mode Toggle (List vs Grid 2-Kolom di HP) -->
+              <div class="view-mode-pill">
+                <button id="viewGridBtn" class="v-btn active" title="Tampilan Grid">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                </button>
+                <button id="viewListBtn" class="v-btn" title="Tampilan List">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <span class="channel-count" id="channelCountBadge">0 Channel</span>
+            </div>
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="category-tabs" id="categoryTabs">
+            <button class="cat-tab active" data-cat="All">Semua</button>
+            <button class="cat-tab" data-cat="Favorites">⭐ Favorit</button>
+            <button class="cat-tab" data-cat="Nasional">📺 Nasional</button>
+            <button class="cat-tab" data-cat="News">📰 Berita</button>
+            <button class="cat-tab" data-cat="Sports">⚽ Sport</button>
+            <button class="cat-tab" data-cat="Entertainment">🎬 Hiburan</button>
+            <button class="cat-tab" data-cat="Daerah">🏛️ Daerah</button>
+            <button class="cat-tab" data-cat="Religious">🕌 Religi</button>
+          </div>
+        </div>
+
+        <!-- Channel Grid / List -->
+        <div class="channel-list mobile-grid" id="channelList"></div>
+      </aside>
+    </main>
+
+    <!-- MOBILE SLIDE-OVER DRAWER (Capstone M3 Pattern) -->
+    <div id="mobileDrawerBackdrop" class="mobile-drawer-backdrop hidden">
+      <div class="mobile-drawer-panel" id="mobileDrawerPanel">
+        <div class="drawer-top">
+          <div class="drawer-header">
+            <div class="brand">
+              <div class="brand-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="2" y="6" width="20" height="15" rx="3" />
+                  <polyline points="17 2 12 6 7 2" />
+                  <polygon points="10 10.5 15.5 13.5 10 16.5" fill="currentColor" stroke="none" />
+                </svg>
+              </div>
+              <div class="brand-text">
+                <h1>Fazen<span>TV</span></h1>
+                <span class="live-pill">LIVE STREAMING</span>
+              </div>
+            </div>
+            <button id="closeDrawerBtn" class="icon-btn">✕</button>
+          </div>
+
+          <div class="drawer-section">
+            <div class="drawer-label">Kategori Siaran</div>
+            <button class="drawer-item active" data-drawer-cat="All">
+              <span>📺 Semua Channel</span>
+              <span class="drawer-badge">Utama</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Nasional">
+              <span>🇮🇩 TV Nasional FHD</span>
+              <span class="drawer-badge">1080p</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Sports">
+              <span>⚽ Olahraga & Live Sport</span>
+              <span class="drawer-badge">Live</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="News">
+              <span>📰 Berita 24 Jam</span>
+              <span class="drawer-badge">News</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Entertainment">
+              <span>🎬 Hiburan, Film & Kartun</span>
+              <span class="drawer-badge">Movies</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Daerah">
+              <span>🏛️ TV Daerah & Lokal</span>
+              <span class="drawer-badge">Lokal</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Favorites">
+              <span>⭐ Channel Favorit Saya</span>
+              <span class="drawer-badge">Simpanan</span>
+            </button>
+          </div>
+
+          <div class="drawer-section">
+            <div class="drawer-label">Pengaturan & Ekstra</div>
+            <button id="drawerLoadFullBtn" class="drawer-action-btn">
+              <span>📥 Muat 120+ Channel TV Daerah</span>
+            </button>
+            <button id="drawerOpenM3uBtn" class="drawer-action-btn">
+              <span>➕ Tambah / Import Playlist M3U</span>
+            </button>
+            <button id="drawerProxyBtn" class="drawer-action-btn">
+              <span id="drawerProxyLabel">🛡️ Smart Proxy: AKTIF (ON)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="drawer-footer">
+          <div class="drawer-status-card">
+            <div class="drawer-status-row">
+              <span>Status Server</span>
+              <span class="status-online">● Terhubung</span>
+            </div>
+            <p>Tips HP: Pilih menu "Tambahkan ke Layar Utama" di browser agar jadi aplikasi penuh.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIAL DESIGN 3 BOTTOM NAVIGATION BAR KHUSUS HP (Persis Capstone BottomNav.tsx) -->
+    <nav class="m3-bottom-nav" aria-label="Navigasi Bawah HP">
+      <button class="m3-nav-item active" data-bnav="All">
+        <div class="m3-nav-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="15" rx="2" ry="2" />
+            <polyline points="17 2 12 7 7 2" />
+          </svg>
+        </div>
+        <span class="m3-nav-label">Semua TV</span>
+      </button>
+
+      <button class="m3-nav-item" data-bnav="Nasional">
+        <div class="m3-nav-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+            <polyline points="2 12 12 17 22 12" />
+          </svg>
+        </div>
+        <span class="m3-nav-label">Nasional</span>
+      </button>
+
+      <button class="m3-nav-item" data-bnav="Favorites">
+        <div class="m3-nav-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        </div>
+        <span class="m3-nav-label">Favorit</span>
+      </button>
+
+      <button class="m3-nav-item" data-bnav="Playlist">
+        <div class="m3-nav-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <span class="m3-nav-label">Playlist</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Modal: Tambah / Import Playlist M3U atau Channel Custom -->
+  <div id="playlistModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Kelola Playlist & Channel M3U</h3>
+        <button id="closeModalBtn" class="icon-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="m-tab active" data-tab="urlTab">Import URL / File</button>
+          <button class="m-tab" data-tab="singleTab">Tambah 1 TV</button>
+          <button class="m-tab" data-tab="rawTab">Paste M3U</button>
+        </div>
+
+        <!-- Tab 1: Import M3U URL or File -->
+        <div id="urlTab" class="tab-pane active">
+          <label class="form-label">Masukkan Link URL Playlist (.m3u / .m3u8)</label>
+          <div class="input-group">
+            <input type="url" id="m3uUrlInput" placeholder="https://iptv-org.github.io/iptv/countries/id.m3u" />
+            <button id="importUrlBtn" class="btn-primary">Import</button>
+          </div>
+
+          <div class="preset-box">
+            <span class="preset-label">Preset Playlist Publik:</span>
+            <div class="preset-buttons">
+              <button class="preset-btn" data-url="/api/id.m3u">🇮🇩 Full TV Indonesia (120+ Ch)</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/sports.m3u">⚽ World Sports FTA</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/movies.m3u">🎬 World Movies FTA</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/news.m3u">🌍 World News FTA</button>
+            </div>
+          </div>
+
+          <div class="divider"><span>ATAU UPLOAD FILE DARI HP / PC</span></div>
+
+          <label class="file-dropzone" for="m3uFileInput">
+            <input type="file" id="m3uFileInput" accept=".m3u,.m3u8,.txt" hidden />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span>Ketuk untuk pilih file <strong>.m3u</strong> atau <strong>.m3u8</strong></span>
+          </label>
+        </div>
+
+        <!-- Tab 2: Add Single Stream -->
+        <div id="singleTab" class="tab-pane hidden">
+          <div class="form-grid">
+            <div>
+              <label class="form-label">Nama Channel</label>
+              <input type="text" id="customNameInput" placeholder="Contoh: RCTI HD / Sport 1" />
+            </div>
+            <div>
+              <label class="form-label">Kategori</label>
+              <select id="customCatInput">
+                <option value="Nasional">Nasional</option>
+                <option value="Sports">Sports</option>
+                <option value="Entertainment">Hiburan / Movies</option>
+                <option value="News">Berita</option>
+                <option value="Daerah">TV Daerah</option>
+              </select>
+            </div>
+          </div>
+          <label class="form-label">URL Stream (.m3u8)</label>
+          <input type="url" id="customUrlInput" placeholder="https://example.com/live/stream.m3u8" />
+
+          <div class="form-grid">
+            <div>
+              <label class="form-label">Custom Referer (Opsional)</label>
+              <input type="text" id="customRefInput" placeholder="https://www.dens.tv/" />
+            </div>
+            <div>
+              <label class="form-label">Custom User-Agent (Opsional)</label>
+              <input type="text" id="customUaInput" placeholder="ExoPlayerLib/2.19.1" />
+            </div>
+          </div>
+          <button id="addSingleChannelBtn" class="btn-primary full-width">Tambah & Putar Channel</button>
+        </div>
+
+        <!-- Tab 3: Paste Raw M3U -->
+        <div id="rawTab" class="tab-pane hidden">
+          <label class="form-label">Paste isi file #EXTM3U di sini:</label>
+          <textarea id="rawM3uInput" rows="5" placeholder="#EXTM3U&#10;#EXTINF:-1 group-title=&quot;Nasional&quot;,Nama Channel&#10;https://link-stream.com/live.m3u8"></textarea>
+          <button id="importRawBtn" class="btn-primary full-width">Parse & Tambahkan</button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="resetPlaylistBtn" class="btn-danger-outline">Reset ke Channel Default</button>
+        <span id="modalStatusMsg" class="modal-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

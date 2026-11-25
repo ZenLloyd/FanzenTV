@@ -1,0 +1,383 @@
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const crypto = require('crypto');
+const { URL } = require('url');
+
+const PORT = process.env.PORT || 3080;
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.ico': 'image/x-icon',
+  '.m3u': 'audio/x-mpegurl; charset=utf-8',
+  '.m3u8': 'application/vnd.apple.mpegurl; charset=utf-8'
+};
+
+function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 'GET', clientIp = '') {
+  return new Promise((resolve, reject) => {
+    if (redirectCount > 5) {
+      return reject(new Error('Too many redirects'));
+    }
+    let parsed;
+    try {
+      parsed = new URL(targetUrl);
+    } catch (err) {
+      return reject(err);
+    }
+
+    const client = parsed.protocol === 'https:' ? https : http;
+    const headers = {
+      'User-Agent':
+        customHeaders['User-Agent'] ||
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      Accept: '*/*',
+      Connection: 'keep-alive',
+      ...customHeaders
+    };
+    if (customHeaders['Referer'] && !headers['Origin']) {
+      try {
+        headers['Origin'] = new URL(customHeaders['Referer']).origin;
+      } catch (_) {}
+    }
+
+    const options = {
+      protocol: parsed.protocol,
+      hostname: parsed.hostname,
+      port: parsed.port || (parsed.protocol === 'https:' ? 443 : 80),
+      path: parsed.pathname + parsed.search,
+      method,
+      headers,
+      timeout: 12000,
+      rejectUnauthorized: false
+    };
+
+    const req = client.request(options, (res) => {
+      if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+        const nextUrl = new URL(res.headers.location, targetUrl).toString();
+        res.resume();
+        return resolve(fetchRemote(nextUrl, customHeaders, redirectCount + 1, method));
+      }
+      resolve({ res, finalUrl: targetUrl });
+    });
+
+    req.on('timeout', () => {
+      req.destroy(new Error('Request timeout'));
+    });
+    req.on('error', (err) => {
+      reject(err);
+    });
+    req.end();
+  });
+}
+
+function readStreamBuffer(stream, contentEncoding = '') {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', (c) => chunks.push(c));
+    stream.on('end', () => {
+      const buf = Buffer.concat(chunks);
+      resolve(decompressBuffer(buf, contentEncoding));
+    });
+    stream.on('error', reject);
+  });
+}
+
+function decompressBuffer(buf, contentEncoding = '') {
+  const enc = (contentEncoding || '').toLowerCase();
+  try {
+    if (enc.includes('gzip') || (buf.length >= 2 && buf[0] === 0x1f && buf[1] === 0x8b)) {
+      return zlib.gunzipSync(buf);
+    }
+    if (enc.includes('deflate')) {
+      return zlib.inflateSync(buf);
+    }
+  } catch (_) {}
+  return buf;
+}
+
+// Live Vidio Token Resolver Cache
+let cachedVidioApiKey = null;
+let cachedVidioApiKeyExp = 0;
+
+function encryptVidioApiKey(rawKey) {
+  const key = 'dPr0QImQ7bc5o9LMntNba2DOsSbZcjUh';
+  const iv = 'C8RWsrtFsoeyCyPt';
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  return cipher.update(rawKey, 'utf-8', 'base64') + cipher.final('base64');
+}
+
+async function getVidioEncryptedApiKey() {
+  if (cachedVidioApiKey && Date.now() < cachedVidioApiKeyExp) {
+    return cachedVidioApiKey;
+  }
+  const { res } = await fetchRemote(
+    'https://api.vidio.com/auth',
+    {
+      Origin: 'https://www.vidio.com',
+      Referer: 'https://www.vidio.com/'
+    },
+    0,
+    'POST'
+  );
+  const buf = await readStreamBuffer(res, res.headers['content-encoding']);
+  const data = JSON.parse(buf.toString('utf8'));
+  if (!data.api_key) throw new Error('Failed to obtain Vidio API key');
+  cachedVidioApiKey = encryptVidioApiKey(data.api_key);
+  cachedVidioApiKeyExp = Date.now() + 3600 * 1000;
+  return cachedVidioApiKey;
+}
+
+async function resolveVidioHlsUrl(slug) {
+  const id = parseInt(slug, 10);
+  const encryptedKey = await getVidioEncryptedApiKey();
+
+  const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
+    Referer: 'https://www.vidio.com/'
+  });
+  const embedHtml = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
+  const sigMatch = embedHtml.match(
+    /\\"streamSignature\\":\{\\"clientId\\":\\"([^"\\]+)\\",\\"signature\\":\\"([^"\\]+)\\"\}/
+  );
+  if (!sigMatch) {
+    throw new Error(`Signature not found for Vidio channel ${slug}`);
+  }
+  const [, clientId, signature] = sigMatch;
+
+  const { res: streamRes } = await fetchRemote(
+    `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
+    {
+      Origin: 'https://www.vidio.com',
+      Referer: 'https://www.vidio.com/',
+      'X-Api-Key': encryptedKey,
+      'X-Secure-Level': '2',
+      'X-API-Platform': 'web-desktop',
+      'X-Signature': signature,
+      'X-Client': clientId,
+      'X-Requested-With': 'vidio-next'
+    }
+  );
+  const streamJson = JSON.parse(
+    (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8')
+  );
+  const hlsUrl = streamJson?.data?.attributes?.hls;
+  if (!hlsUrl) {
+    throw new Error(`No HLS stream returned for ${slug}`);
+  }
+  return hlsUrl;
+}
+
+function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '') {
+  const lines = content.split(/\r?\n/);
+  const buildProxyUrl = (rawTarget) => {
+    const trimmedTarget = rawTarget.trim();
+    if (trimmedTarget.startsWith('data:')) return trimmedTarget;
+    let absUrl;
+    try {
+      absUrl = new URL(trimmedTarget, baseUrl).toString();
+    } catch (_) {
+      return rawTarget;
+    }
+    const params = new URLSearchParams();
+    params.set('url', absUrl);
+    if (ua) params.set('ua', ua);
+    if (ref) params.set('ref', ref);
+    return `${hostPrefix}/api/proxy?${params.toString()}`;
+  };
+
+  return lines
+    .map((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return line;
+      if (trimmed.startsWith('#')) {
+        return line.replace(/(^|[,:])URI="([^"]+)"/g, (full, prefix, uriVal) => {
+          return `${prefix}URI="${buildProxyUrl(uriVal)}"`;
+        });
+      }
+      return buildProxyUrl(trimmed);
+    })
+    .join('\n');
+}
+
+const server = http.createServer(async (req, res) => {
+  const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    return res.end();
+  }
+
+  // Real-time Official Vidio Live HLS Resolver (Indosiar, SCTV, ANTV, Mentari TV, RTV, NET, Metro TV)
+  if (reqUrl.pathname === '/api/vidio' || reqUrl.pathname === '/api/live' || reqUrl.pathname === '/api/index.js') {
+    const slug = reqUrl.searchParams.get('id');
+    const mode = reqUrl.searchParams.get('mode') || '';
+    if (!slug) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'Missing id parameter' }));
+    }
+    let step = 'init';
+    try {
+      step = 'resolveVidioHlsUrl';
+      const hlsUrl = await resolveVidioHlsUrl(slug);
+      if (mode === 'json') {
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        });
+        return res.end(JSON.stringify({ hlsUrl }));
+      }
+      step = 'fetchHlsManifest';
+      const ref = 'https://www.vidio.com/';
+      const ua =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
+      const { res: remoteRes, finalUrl } = await fetchRemote(hlsUrl, {
+        Referer: ref,
+        'User-Agent': ua
+      });
+      const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
+      const rawText = rawBuf.toString('utf8');
+      const proto = req.headers['x-forwarded-proto'] || 'http';
+      const hostPrefix = req.headers.host && !req.headers.host.startsWith('localhost')
+        ? `${proto}://${req.headers.host}`
+        : '';
+      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      });
+      return res.end(rewritten);
+    } catch (err) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: err.message, step }));
+    }
+  }
+
+  // HLS & M3U Smart Proxy endpoint
+  if (reqUrl.pathname === '/api/proxy') {
+    const targetUrl = reqUrl.searchParams.get('url');
+    const ua = reqUrl.searchParams.get('ua') || '';
+    const ref = reqUrl.searchParams.get('ref') || '';
+
+    if (!targetUrl) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'Missing url parameter' }));
+    }
+
+    try {
+      const customHeaders = {};
+      if (ua) customHeaders['User-Agent'] = ua;
+      if (ref) customHeaders['Referer'] = ref;
+
+      const { res: remoteRes, finalUrl } = await fetchRemote(targetUrl, customHeaders);
+      const statusCode = remoteRes.statusCode || 200;
+      const contentType = (remoteRes.headers['content-type'] || '').toLowerCase();
+      const contentEncoding = remoteRes.headers['content-encoding'] || '';
+      const cleanPath = new URL(finalUrl).pathname.toLowerCase();
+
+      const isM3u8 =
+        cleanPath.endsWith('.m3u8') ||
+        cleanPath.endsWith('.m3u') ||
+        contentType.includes('mpegurl') ||
+        contentType.includes('x-mpegurl');
+
+      if (statusCode >= 400) {
+        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+        remoteRes.resume();
+        return res.end(JSON.stringify({ error: `Upstream returned ${statusCode}` }));
+      }
+
+      if (isM3u8) {
+        const rawBuf = await readStreamBuffer(remoteRes, contentEncoding);
+        const rawText = rawBuf.toString('utf8');
+        if (rawText.trim().startsWith('#EXTM3U')) {
+          const proto = req.headers['x-forwarded-proto'] || 'http';
+      const hostPrefix = req.headers.host && !req.headers.host.startsWith('localhost')
+        ? `${proto}://${req.headers.host}`
+        : '';
+      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
+          res.writeHead(200, {
+            'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
+            'Cache-Control': 'no-cache, no-store, must-revalidate'
+          });
+          res.end(rewritten);
+        } else {
+          res.writeHead(200, {
+            'Content-Type': remoteRes.headers['content-type'] || 'application/octet-stream'
+          });
+          res.end(rawBuf);
+        }
+      } else {
+        const headersOut = {
+          'Content-Type': remoteRes.headers['content-type'] || 'video/mp2t',
+          'Cache-Control': 'public, max-age=30'
+        };
+        if (remoteRes.headers['content-length']) {
+          headersOut['Content-Length'] = remoteRes.headers['content-length'];
+        }
+        if (remoteRes.headers['content-encoding']) {
+          headersOut['Content-Encoding'] = remoteRes.headers['content-encoding'];
+        }
+        res.writeHead(statusCode, headersOut);
+        remoteRes.pipe(res);
+        req.on('close', () => {
+          remoteRes.destroy();
+        });
+      }
+    } catch (err) {
+      if (!res.headersSent) {
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message || 'Proxy fetch failed' }));
+      }
+    }
+    return;
+  }
+
+  // Serve cached id.m3u
+  if (reqUrl.pathname === '/api/id.m3u') {
+    const m3uPath = path.join(__dirname, 'id.m3u');
+    if (fs.existsSync(m3uPath)) {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return fs.createReadStream(m3uPath).pipe(res);
+    } else {
+      res.writeHead(404);
+      return res.end('Not found');
+    }
+  }
+
+  // Serve static files from /public
+  let safePath = path.normalize(reqUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
+  if (safePath === '/' || safePath === '\\') {
+    safePath = '/index.html';
+  }
+  const filePath = path.join(PUBLIC_DIR, safePath);
+
+  fs.stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return res.end('404 Not Found');
+    }
+    const ext = path.extname(filePath).toLowerCase();
+    const mime = MIME_TYPES[ext] || 'application/octet-stream';
+    res.writeHead(200, { 'Content-Type': mime });
+    fs.createReadStream(filePath).pipe(res);
+  });
+});
+
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`FazenTV Indonesia running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = server;

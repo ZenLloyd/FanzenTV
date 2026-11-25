@@ -1,0 +1,11 @@
+{
+  "name": "fazentv-indonesia",
+  "version": "1.0.0",
+  "description": "Aplikasi TV Online & IPTV Player Indonesia (HLS Proxy + M3U Manager + PWA)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["iptv", "tv-online", "indonesia", "hls", "m3u8", "pwa"],
+  "license": "MIT"
+}
