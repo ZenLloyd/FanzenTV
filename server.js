@@ -506,10 +506,11 @@ const server = http.createServer(async (req, res) => {
         const rawText = rawBuf.toString('utf8');
         if (rawText.trim().startsWith('#EXTM3U')) {
           const proto = req.headers['x-forwarded-proto'] || 'http';
-      const hostPrefix = req.headers.host && !req.headers.host.startsWith('localhost')
-        ? `${proto}://${req.headers.host}`
-        : '';
-      const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
+          const hostPrefix =
+            req.headers.host && !req.headers.host.startsWith('localhost')
+              ? `${proto}://${req.headers.host}`
+              : '';
+          const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix, mergedCk);
           res.writeHead(200, {
             'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
             'Cache-Control': 'no-cache, no-store, must-revalidate'
