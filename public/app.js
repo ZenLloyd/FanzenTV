@@ -562,6 +562,7 @@ function mountEmbedIframe(embedUrl) {
   const iframe = document.createElement('iframe');
   iframe.id = 'vidioEmbedFrame';
   iframe.src = embedUrl;
+  iframe.referrerPolicy = 'no-referrer';
   iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
   iframe.allowFullscreen = true;
   iframe.style.cssText = 'width:100%;height:100%;border:0;background:#000;';
@@ -587,7 +588,15 @@ async function playChannel(channel) {
 
   showOverlay(`Menghubungkan ke ${channel.name}...`, false);
 
-  // Always use native HLS player (no Vidio iframe block!)
+  const isCloudHost =
+    window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app');
+
+  // On Vercel cloud (24/7 even when laptop is off), play Indonesia-only Vidio channels directly via clean player with referrerPolicy="no-referrer" to bypass domain block!
+  if (isCloudHost && channel.directLocal && channel.vidioEmbedUrl) {
+    mountEmbedIframe(channel.vidioEmbedUrl);
+    return;
+  }
+
   let streamUrl = buildStreamUrl(channel);
 
   if (hlsInstance) {
