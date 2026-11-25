@@ -23,12 +23,24 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran Resmi Trans TV • Bioskop Trans TV • Brownis'
   },
   {
+    id: 'mnctv-hd',
+    name: 'MNCTV HD',
+    category: 'Nasional',
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/MNCTV_logo_2015.svg/512px-MNCTV_logo_2015.svg.png',
+    url: 'https://linier-mnctv.rctiplus.id/mnctv-sdi.m3u8',
+    ref: 'https://www.rctiplus.com/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Siaran Resmi MNCTV • Upin & Ipin • Family 100 • Liga Futsal'
+  },
+  {
     id: 'gtv-hd',
     name: 'GTV HD',
     category: 'Nasional',
     quality: '720p',
     logo: 'https://i.imgur.com/jjuKnYs.png',
-    url: 'https://linier-gtv.rctiplus.id/gtv-sdi-avc1_1000000=7-mp4a_96000=1.m3u8',
+    url: 'https://linier-gtv.rctiplus.id/gtv-sdi.m3u8',
+    backupUrl: 'https://linier-gtv.rctiplus.id/gtv-sdi-avc1_1000000=7-mp4a_96000=1.m3u8',
     ref: 'https://www.rctiplus.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
@@ -119,7 +131,8 @@ const DEFAULT_CHANNELS = [
     category: 'News',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/INews_logo_%282023%29.svg/512px-INews_logo_%282023%29.svg.png',
-    url: 'https://linier-inews.rctiplus.id/inews-sdi-avc1_100000=7-mp4a_96000=1.m3u8',
+    url: 'https://linier-inews.rctiplus.id/inews-sdi.m3u8',
+    backupUrl: 'https://linier-inews.rctiplus.id/inews-sdi-avc1_100000=7-mp4a_96000=1.m3u8',
     ref: 'https://www.rctiplus.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     subtitle: 'Siaran Resmi iNews • Berita Nasional & Sport MNC'
