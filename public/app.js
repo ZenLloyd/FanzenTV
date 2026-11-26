@@ -1217,6 +1217,16 @@ function bindEvents() {
     } else if (e.key === 'ArrowDown' || e.key === 'ChannelDown') {
       e.preventDefault();
       stepChannel(1);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      stepChannel(-1);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      stepChannel(1);
+    } else if (e.key === ' ' || e.key === 'MediaPlayPause') {
+      e.preventDefault();
+      if (videoPlayer.paused) videoPlayer.play().catch(() => {});
+      else videoPlayer.pause();
     } else if (e.key.toLowerCase() === 'f') {
       e.preventDefault();
       document.getElementById('fullscreenBtn').click();

@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0f19" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FazenTV" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
   <title>FazenTV — Live TV Online Indonesia</title>
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" type="image/svg+xml" href="/icon.svg" />
@@ -102,7 +106,7 @@
       <!-- Left / Sticky Top Video Player Section -->
       <section class="player-section">
         <div class="video-wrapper" id="videoWrapper">
-          <video id="videoPlayer" playsinline controls crossorigin="anonymous"></video>
+          <video id="videoPlayer" playsinline webkit-playsinline controls crossorigin="anonymous"></video>
 
           <!-- Overlay Loading / Error / Status -->
           <div id="playerOverlay" class="player-overlay hidden">
