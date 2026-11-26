@@ -447,18 +447,40 @@ const DEFAULT_CHANNELS = [
     url: 'https://jmp2.uk/plu-6475bfec536e0c0008858e9f.m3u8',
     ref: '',
     ua: '',
-    subtitle: 'Serial Drama Korea Populer 24 Jam • Romance, Comedy & Seru'
+    subtitle: 'Serial Drama Korea Populer • Audio Korea Asli + Subtitle'
   },
   {
-    id: 'dramas-coreanos',
-    name: 'Dramas Coreanos (Drakor Hits)',
+    id: 'cctv8-dracin',
+    name: 'CCTV-8 (Dracin FHD)',
     category: 'Drama',
     quality: '1080p',
-    logo: 'https://images.pluto.tv/channels/6185a9a88b2ce30007de5128/colorLogoPNG_1765467371603.png',
-    url: 'https://jmp2.uk/plu-6185a9a88b2ce30007de5128.m3u8',
+    logo: 'https://i.imgur.com/GyHaZ8X.png',
+    url: 'http://74.91.26.218:82/live/cctv8hd.m3u8',
     ref: '',
     ua: '',
-    subtitle: 'Koleksi Serial Drakor Romantis & Kisah Seru Nonstop'
+    subtitle: 'Saluran Resmi Serial Drama Tiongkok (Dracin) 24 Jam • Mandarin Asli'
+  },
+  {
+    id: 'cctv-storm-dracin',
+    name: 'CCTV Storm (Dracin Wuxia & Action)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/rEttkKm.png',
+    url: 'http://38.75.136.137:98/gslb/dsdqpub/fyjc.m3u8?auth=testpub',
+    ref: '',
+    ua: '',
+    subtitle: 'Serial Drama Silat Wuxia, Kungfu & Aksi Kerajaan Tiongkok'
+  },
+  {
+    id: 'cctv6-movie',
+    name: 'CCTV-6 Movie (Sinema & Drama Asia)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/rFiaef7.png',
+    url: 'http://69.30.245.50/live/cctv6.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Sinema Film Box Office & Drama Mandarin Pilihan'
   },
   {
     id: 'celestial-movies',
@@ -592,6 +614,130 @@ let useSmartProxy = true;
 let hlsInstance = null;
 let aspectModes = ['FIT', 'FILL', '16:9'];
 let currentAspectIndex = 0;
+let userSubtitlePref = localStorage.getItem('bitstream_subtitle_pref') || 'off';
+
+const CASUAL_PHRASES = [
+  [/\bwhat are you doing\b/gi, 'lagi ngapain lu'],
+  [/\bwhat's wrong\b/gi, 'kenapa emang'],
+  [/\bwhat is wrong\b/gi, 'ada apa sih'],
+  [/\bwhat is this\b/gi, 'apaan nih'],
+  [/\bwhat is that\b/gi, 'apaan tuh'],
+  [/\bwhat happened\b/gi, 'ada apa nih'],
+  [/\bwhy are you doing this\b/gi, 'kenapa lu gini'],
+  [/\bwhy did you do that\b/gi, 'kenapa lu lakuin itu'],
+  [/\bi don't know\b/gi, 'gak tau gue'],
+  [/\bi don't understand\b/gi, 'gue gak paham'],
+  [/\bi understand\b/gi, 'gue paham kok'],
+  [/\bi got it\b/gi, 'gue ngerti'],
+  [/\bi'm sorry\b/gi, 'sorry ya'],
+  [/\bi am sorry\b/gi, 'gue minta maaf'],
+  [/\bexcuse me\b/gi, 'permisi'],
+  [/\bthank you so much\b/gi, 'makasih banyak ya'],
+  [/\bthank you\b/gi, 'makasih ya'],
+  [/\bthanks\b/gi, 'makasih'],
+  [/\byou're welcome\b/gi, 'sama-sama'],
+  [/\bi love you\b/gi, 'gue sayang lu'],
+  [/\bi miss you\b/gi, 'gue kangen lu'],
+  [/\bare you crazy\b/gi, 'gila lu ya'],
+  [/\bare you okay\b/gi, 'lu gak apa-apa kan'],
+  [/\bare you alright\b/gi, 'lu baik-baik aja kan'],
+  [/\bno way\b/gi, 'gak mungkin'],
+  [/\breally\b/gi, 'beneran?'],
+  [/\bof course\b/gi, 'pastilah'],
+  [/\bwait a minute\b/gi, 'tunggu bentar'],
+  [/\bwait for me\b/gi, 'tungguin gue'],
+  [/\bhold on\b/gi, 'tunggu dulu'],
+  [/\bshut up\b/gi, 'diem lu'],
+  [/\bget out\b/gi, 'pergi sana'],
+  [/\blet's go\b/gi, 'ayuk cabut'],
+  [/\blet's eat\b/gi, 'makan yuk'],
+  [/\bdon't worry\b/gi, 'tenang aja, santai'],
+  [/\bdon't go\b/gi, 'jangan pergi dulu'],
+  [/\bdon't do that\b/gi, 'jangan gitu dong'],
+  [/\bsee you later\b/gi, 'sampai ketemu ntar'],
+  [/\bgoodbye\b/gi, 'dadah'],
+  [/\bhello\b/gi, 'halo'],
+  [/\byes\b/gi, 'iya'],
+  [/\bno\b/gi, 'enggak'],
+  [/\bplease\b/gi, 'tolong ya'],
+  [/\bi want to\b/gi, 'gue pengen'],
+  [/\bi have to\b/gi, 'gue harus'],
+  [/\bi will\b/gi, 'gue bakal'],
+  [/\bi am\b/gi, 'gue lagi'],
+  [/\bi'm\b/gi, 'gue'],
+  [/\bi\b/g, 'gue'],
+  [/\bme\b/gi, 'gue'],
+  [/\bmy\b/gi, 'gue punya'],
+  [/\byou\b/gi, 'lu'],
+  [/\byour\b/gi, 'lu punya'],
+  [/\bwe\b/gi, 'kita'],
+  [/\bthey\b/gi, 'mereka'],
+  [/\bhe\b/gi, 'dia'],
+  [/\bshe\b/gi, 'dia']
+];
+
+function translateToCasualIndo(text) {
+  if (!text) return '';
+  let out = text;
+  for (const [pattern, rep] of CASUAL_PHRASES) {
+    out = out.replace(pattern, rep);
+  }
+  return out;
+}
+
+function applySubtitleChoice() {
+  const overlay = document.getElementById('customSubtitleOverlay');
+  if (!overlay) return;
+
+  if (userSubtitlePref === 'off') {
+    overlay.classList.add('hidden');
+    overlay.textContent = '';
+    if (hlsInstance) hlsInstance.subtitleTrack = -1;
+    return;
+  }
+
+  if (!hlsInstance) return;
+
+  let targetTrackIdx = 0;
+  if (userSubtitlePref.startsWith('track_')) {
+    targetTrackIdx = parseInt(userSubtitlePref.replace('track_', ''), 10) || 0;
+  }
+  hlsInstance.subtitleTrack = targetTrackIdx;
+
+  function attachTrackListener() {
+    for (let i = 0; i < videoPlayer.textTracks.length; i++) {
+      const tt = videoPlayer.textTracks[i];
+      tt.mode = 'hidden';
+      tt.oncuechange = () => {
+        if (userSubtitlePref === 'off') {
+          overlay.classList.add('hidden');
+          overlay.textContent = '';
+          return;
+        }
+        const active = tt.activeCues;
+        if (!active || active.length === 0) {
+          overlay.classList.add('hidden');
+          overlay.textContent = '';
+          return;
+        }
+        let txt = Array.from(active).map((c) => c.text || '').join('\n').trim();
+        if (!txt) {
+          overlay.classList.add('hidden');
+          return;
+        }
+        if (userSubtitlePref === 'indo') {
+          overlay.textContent = translateToCasualIndo(txt);
+        } else {
+          overlay.textContent = txt;
+        }
+        overlay.classList.remove('hidden');
+      };
+    }
+  }
+
+  attachTrackListener();
+  setTimeout(attachTrackListener, 500);
+}
 
 // DOM Elements
 const videoPlayer = document.getElementById('videoPlayer');
@@ -857,10 +1003,28 @@ async function playChannel(channel) {
     hlsInstance.attachMedia(videoPlayer);
 
     hlsInstance.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (_, data) => {
-      const subLabel = document.getElementById('subtitlesLabel');
-      if (subLabel && data.subtitleTracks && data.subtitleTracks.length > 0) {
-        subLabel.textContent = `CC (${data.subtitleTracks.length})`;
+      const subSelect = document.getElementById('subtitleSelect');
+      if (!subSelect) return;
+      const tracks = data.subtitleTracks || [];
+      subSelect.innerHTML = '<option value="off">CC: Off</option>';
+      if (tracks.length > 0) {
+        const optIndo = document.createElement('option');
+        optIndo.value = 'indo';
+        optIndo.textContent = 'CC: 🇮🇩 Indo (Santai)';
+        subSelect.appendChild(optIndo);
+
+        tracks.forEach((tr, i) => {
+          const opt = document.createElement('option');
+          opt.value = 'track_' + i;
+          const label = tr.name || tr.lang || `Track ${i + 1}`;
+          opt.textContent = `CC: ${label}`;
+          subSelect.appendChild(opt);
+        });
       }
+
+      const exists = Array.from(subSelect.options).some((o) => o.value === userSubtitlePref);
+      subSelect.value = exists ? userSubtitlePref : 'off';
+      applySubtitleChoice();
     });
 
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
@@ -1128,29 +1292,17 @@ function bindEvents() {
     });
   }
 
-  // Subtitle / CC button handler
-  const subBtn = document.getElementById('subtitlesBtn');
-  const subLabel = document.getElementById('subtitlesLabel');
-  if (subBtn) {
-    subBtn.addEventListener('click', () => {
-      if (!hlsInstance) {
-        showOverlay('Pemberitahuan: Buka siaran terlebih dahulu untuk memilih subtitle.', false);
-        setTimeout(hideOverlay, 2500);
-        return;
-      }
-      const tracks = hlsInstance.subtitleTracks || [];
-      if (tracks.length === 0) {
-        showOverlay('💬 Info: Siaran live ini belum membawa trek teks bawaan. Suara dubbing / bahasa asli tetap aktif jernih.', false);
-        setTimeout(hideOverlay, 3500);
-        return;
-      }
-      const cur = hlsInstance.subtitleTrack;
-      const next = (cur + 1) >= tracks.length ? -1 : cur + 1;
-      hlsInstance.subtitleTrack = next;
-      const trackName = next === -1 ? 'OFF' : (tracks[next].name || tracks[next].lang || `Track ${next + 1}`);
-      if (subLabel) subLabel.textContent = next === -1 ? 'CC' : `CC: ${trackName}`;
-      showOverlay(`Subtitle diubah: ${trackName}`, false);
-      setTimeout(hideOverlay, 2000);
+  // Subtitle / CC dropdown handler
+  const subSelect = document.getElementById('subtitleSelect');
+  if (subSelect) {
+    subSelect.value = userSubtitlePref;
+    subSelect.addEventListener('change', () => {
+      userSubtitlePref = subSelect.value;
+      localStorage.setItem('bitstream_subtitle_pref', userSubtitlePref);
+      applySubtitleChoice();
+      const label = subSelect.options[subSelect.selectedIndex]?.textContent || userSubtitlePref;
+      showOverlay(`Subtitle disimpan: ${label}`, false);
+      setTimeout(hideOverlay, 1500);
     });
   }
 

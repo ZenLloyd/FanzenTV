@@ -108,6 +108,9 @@
         <div class="video-wrapper" id="videoWrapper">
           <video id="videoPlayer" playsinline webkit-playsinline controls crossorigin="anonymous"></video>
 
+          <!-- Custom Subtitle Overlay -->
+          <div id="customSubtitleOverlay" class="custom-subtitle-overlay hidden"></div>
+
           <!-- Overlay Loading / Error / Status -->
           <div id="playerOverlay" class="player-overlay hidden">
             <div class="spinner" id="playerSpinner"></div>
@@ -161,9 +164,9 @@
             <button id="aspectBtn" class="control-btn" title="Ubah Rasio Layar (Fit / Fill / 16:9)">
               <span id="aspectLabel">FIT</span>
             </button>
-            <button id="subtitlesBtn" class="control-btn" title="Pilih Subtitle / Terjemahan">
-              <span id="subtitlesLabel">CC</span>
-            </button>
+            <select id="subtitleSelect" class="control-select" title="Pilihan Subtitle">
+              <option value="off">CC: Off</option>
+            </select>
             <button id="pipBtn" class="control-btn" title="Picture-in-Picture (Mini Player)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="3" width="20" height="14" rx="2" />
