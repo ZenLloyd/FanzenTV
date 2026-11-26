@@ -450,6 +450,17 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Serial Drama Korea (Drakor) • 100% Bahasa Korea Asli (MBC National)'
   },
   {
+    id: 'mango-tv',
+    name: 'Mango TV (Hunan TV / 芒果TV)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://parco-zh.github.io/demo/HNWS.png',
+    url: 'http://hlsal-ldvt.qing.mgtv.com/nn_live/nn_x64/dWlwPTEyNy4wLjAuMSZ1aWQ9cWluZy1jbXMmbm5fdGltZXpvbmU9OCZjZG5leF9pZD1hbF9obHNfbGR2dCZ1dWlkPTliODY4NmU5ZTM2YzYwMmMmZT02OTE0NjA0JnY9MSZpZD1ITldTWkdTVCZzPTcwN2RiYTc2YzJjNmJmMTQ4MmUyZGYzOWU2NWM3YWFi/HNWSZGST.m3u8',
+    ref: 'https://www.mgtv.com/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Siaran Resmi Mango TV / Hunan TV • Drama Romantis & Variety Show Populer'
+  },
+  {
     id: 'cctv8-dracin',
     name: 'CCTV-8 (Dracin FHD)',
     category: 'Drama',
