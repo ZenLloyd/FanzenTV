@@ -525,7 +525,7 @@ const server = http.createServer(async (req, res) => {
 
   // HLS & M3U Smart Proxy endpoint
   if (reqUrl.pathname === '/api/proxy') {
-    const targetUrl = reqUrl.searchParams.get('url');
+    let targetUrl = reqUrl.searchParams.get('url');
     const ua = reqUrl.searchParams.get('ua') || '';
     const ref = reqUrl.searchParams.get('ref') || '';
     const ck = reqUrl.searchParams.get('ck') || '';
@@ -533,6 +533,11 @@ const server = http.createServer(async (req, res) => {
     if (!targetUrl) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ error: 'Missing url parameter' }));
+    }
+
+    // Auto-repair missing Intechmedia fMP4 initialization segment (VTV ch107 / ch101) using identical encoder init from ch111
+    if (/flv\.intechmedia\.net\/live\/ch(107|101)-init\.mp4/i.test(targetUrl)) {
+      targetUrl = 'https://flv.intechmedia.net/live/ch111-init.mp4';
     }
 
     try {
