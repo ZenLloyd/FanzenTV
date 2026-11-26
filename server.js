@@ -71,7 +71,7 @@ function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 
         res.resume();
         return resolve(fetchRemote(nextUrl, nextHeaders, redirectCount + 1, method, clientIp));
       }
-      resolve({ res, finalUrl: targetUrl });
+      resolve({ res, finalUrl: targetUrl, cookies: customHeaders['Cookie'] || '' });
     });
 
     req.on('timeout', () => {
@@ -362,12 +362,12 @@ const server = http.createServer(async (req, res) => {
       const hlsUrl = await resolveRctiPlusHlsUrl(chId);
       const ref = 'https://www.rctiplus.com/';
       const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)';
-      const { res: remoteRes, finalUrl } = await fetchRemote(hlsUrl, {
+      const { res: remoteRes, finalUrl, cookies: redirCk } = await fetchRemote(hlsUrl, {
         Referer: ref,
         'User-Agent': ua
       });
       const setCookies = remoteRes.headers['set-cookie'] || [];
-      const ck = setCookies.map((c) => c.split(';')[0]).join('; ');
+      const ck = [redirCk, ...setCookies.map((c) => c.split(';')[0])].filter(Boolean).join('; ');
       const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
       const rawText = rawBuf.toString('utf8');
       const proto = req.headers['x-forwarded-proto'] || 'http';
@@ -486,7 +486,9 @@ const server = http.createServer(async (req, res) => {
           });
           return res.end(JSON.stringify({ synthetic: true, baseUrl: resolved.baseUrl }));
         }
-        const rewritten = rewriteM3u8(resolved.syntheticMaster, resolved.baseUrl, ua, ref, hostPrefix);
+        const mikroUa =
+          'Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36';
+        const rewritten = rewriteM3u8(resolved.syntheticMaster, resolved.baseUrl, mikroUa, ref, hostPrefix);
         res.writeHead(200, {
           'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
           'Cache-Control': 'no-cache, no-store, must-revalidate'
@@ -539,11 +541,9 @@ const server = http.createServer(async (req, res) => {
       if (ref) customHeaders['Referer'] = ref;
       if (ck) customHeaders['Cookie'] = ck;
 
-      const { res: remoteRes, finalUrl } = await fetchRemote(targetUrl, customHeaders);
+      const { res: remoteRes, finalUrl, cookies: redirCk } = await fetchRemote(targetUrl, customHeaders);
       const nextCookies = remoteRes.headers['set-cookie'] || [];
-      const mergedCk = nextCookies.length
-        ? [ck, ...nextCookies.map((c) => c.split(';')[0])].filter(Boolean).join('; ')
-        : ck;
+      const mergedCk = [ck, redirCk, ...nextCookies.map((c) => c.split(';')[0])].filter(Boolean).join('; ');
       const statusCode = remoteRes.statusCode || 200;
       const contentType = (remoteRes.headers['content-type'] || '').toLowerCase();
       const contentEncoding = remoteRes.headers['content-encoding'] || '';
