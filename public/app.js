@@ -329,6 +329,105 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran spesial & event langsung dari Dens.TV'
   },
   {
+    id: 'bein-sports-xtra',
+    name: 'beIN SPORTS XTRA',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.ibb.co/HT49GPmB/XTRA-2.png',
+    url: 'https://bein-xtra-bein.amagi.tv/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Official beIN Sports • Live Football, Motorsport & Sports'
+  },
+  {
+    id: 'bein-sports-xtra-es',
+    name: 'beIN SPORTS XTRA Español',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/V562tpO.png',
+    url: 'https://dc1644a9jazgj.cloudfront.net/beIN_Sports_Xtra_Espanol.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'beIN Sports • Fútbol En Vivo & Deportes'
+  },
+  {
+    id: 'cbs-golazo',
+    name: 'CBS Sports Golazo Network',
+    category: 'Sports',
+    quality: '720p',
+    logo: 'https://i.imgur.com/eMjutHS.png',
+    url: 'https://dai.google.com/linear/hls/event/7f3Wv6f7QEKfQna22jHqLQ/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'UEFA Champions League, Serie A & 24/7 Football News'
+  },
+  {
+    id: 'fubo-sports',
+    name: 'Fubo Sports Network',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/qFNRJLb.png',
+    url: 'https://dnf08l6u6uxnz.cloudfront.net/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Sports, Matches & Combat Highlights'
+  },
+  {
+    id: 'fightbox-hd',
+    name: 'FightBox HD',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/mRsnztA.png',
+    url: 'https://nosignal1.antenaplay.ro/hls/fightbox-hd/index.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'MMA, Kickboxing, Boxing & Martial Arts Live'
+  },
+  {
+    id: 'glory-kickboxing',
+    name: 'Glory Kickboxing',
+    category: 'Sports',
+    quality: '720p',
+    logo: 'https://i.imgur.com/tS7Ub7i.png',
+    url: 'https://6f972d29.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0dsb3J5S2lja2JveGluZ19ITFM/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Championship Kickboxing Live & On-Demand'
+  },
+  {
+    id: 'redbull-tv',
+    name: 'Red Bull TV',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/5e7cb84a172a0f0007da69e4/colorLogoPNG.png',
+    url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Action Sports, F1 Racing, Moto & Extreme Sports'
+  },
+  {
+    id: 'floracing',
+    name: 'FloRacing',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://images.fubo.tv/channel-config-ui/station-logos/on-dark/floracing-white.png',
+    url: 'https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Motorsports, Dirt Track, Sprint & Drag Racing'
+  },
+  {
+    id: 'tennis-channel',
+    name: 'Tennis Channel',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/tsljAnY.png',
+    url: 'https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg01444-tennischannelth-tennischannelnl-samsungnl/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Tennis, Grand Slam & ATP/WTA Tours'
+  },
+  {
     id: 'rock-action',
     name: 'ROCK Action HD',
     category: 'Entertainment',
@@ -457,6 +556,19 @@ async function refreshLiveEvents() {
       isEvent: true,
       subtitle: 'Siaran langsung event olahraga • Live Event'
     }));
+    const eventTab = document.getElementById('eventCatTab');
+    if (eventTab) {
+      if (liveEvents.length > 0) {
+        eventTab.style.display = 'inline-flex';
+        eventTab.innerHTML = `🔴 Event (${liveEvents.length})`;
+      } else {
+        eventTab.style.display = 'none';
+        if (activeCategory === 'Event' || activeCategory === 'Events') {
+          activeCategory = 'All';
+          document.querySelectorAll('.cat-tab').forEach((t) => t.classList.toggle('active', t.dataset.cat === 'All'));
+        }
+      }
+    }
     renderChannelList();
   } catch (_) {}
 }
@@ -507,6 +619,7 @@ function getFilteredChannels() {
     if (!matchesSearch) return false;
 
     if (activeCategory === 'All') return true;
+    if (activeCategory === 'Event' || activeCategory === 'Events') return !!ch.isEvent;
     if (activeCategory === 'Favorites') return favorites.includes(ch.id);
     return ch.category.toLowerCase() === activeCategory.toLowerCase();
   });

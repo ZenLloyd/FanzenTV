@@ -1312,6 +1312,18 @@ video.aspect-stretch {
   font-weight: 800;
   animation: eventPulse 1.6s ease-in-out infinite;
 }
+.cat-tab.event-cat-tab {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #f87171 !important;
+  font-weight: 700;
+}
+.cat-tab.event-cat-tab.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.5) !important;
+}
 @keyframes eventPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
