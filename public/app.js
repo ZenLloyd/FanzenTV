@@ -439,15 +439,15 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Channel Film Action & Hollywood'
   },
   {
-    id: 'k-drama-fhd',
-    name: 'K-Drama (Drakor FHD)',
+    id: 'mbc-drama-kr',
+    name: 'MBC Korea (Drakor FHD)',
     category: 'Drama',
     quality: '1080p',
-    logo: 'https://images.pluto.tv/channels/6475bfec536e0c0008858e9f/colorLogoPNG.png',
-    url: 'https://jmp2.uk/plu-6475bfec536e0c0008858e9f.m3u8',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/MBCNET_%EB%A1%9C%EA%B3%A0.svg/512px-MBCNET_%EB%A1%9C%EA%B3%A0.svg.png',
+    url: 'https://cdn-us-east-prod-ingest-infra-dacast-com.akamaized.net/624ff8f9-db18-da92-4d42-896fa2ff3eb3/source/index.m3u8',
     ref: '',
     ua: '',
-    subtitle: 'Serial Drama Korea Populer • Audio Korea Asli + Subtitle'
+    subtitle: 'Serial Drama Korea (Drakor) • 100% Bahasa Korea Asli (MBC National)'
   },
   {
     id: 'cctv8-dracin',
@@ -1006,21 +1006,32 @@ async function playChannel(channel) {
       const subSelect = document.getElementById('subtitleSelect');
       if (!subSelect) return;
       const tracks = data.subtitleTracks || [];
-      subSelect.innerHTML = '<option value="off">CC: Off</option>';
-      if (tracks.length > 0) {
-        const optIndo = document.createElement('option');
-        optIndo.value = 'indo';
-        optIndo.textContent = 'CC: 🇮🇩 Indo (Santai)';
-        subSelect.appendChild(optIndo);
-
-        tracks.forEach((tr, i) => {
-          const opt = document.createElement('option');
-          opt.value = 'track_' + i;
-          const label = tr.name || tr.lang || `Track ${i + 1}`;
-          opt.textContent = `CC: ${label}`;
-          subSelect.appendChild(opt);
-        });
+      if (tracks.length === 0) {
+        subSelect.innerHTML = '<option value="off">Off</option>';
+        subSelect.title = 'Siaran ini tidak membawa trek subtitle terpisah (hardsub / audio asli)';
+        applySubtitleChoice();
+        return;
       }
+      subSelect.title = 'Pilih Subtitle';
+      subSelect.innerHTML = '<option value="off">Off</option>';
+
+      // Option Indonesia
+      const optIndo = document.createElement('option');
+      optIndo.value = 'indo';
+      optIndo.textContent = 'Indonesia';
+      subSelect.appendChild(optIndo);
+
+      tracks.forEach((tr, i) => {
+        const opt = document.createElement('option');
+        opt.value = 'track_' + i;
+        let label = tr.name || tr.lang || `Track ${i + 1}`;
+        if (/^en/i.test(label) || /english/i.test(label)) label = 'English';
+        else if (/^es/i.test(label) || /spanish/i.test(label)) label = 'Spanish';
+        else if (/^ko/i.test(label) || /korean/i.test(label)) label = 'Korean';
+        else if (/^zh/i.test(label) || /chinese/i.test(label)) label = 'Chinese';
+        opt.textContent = label;
+        subSelect.appendChild(opt);
+      });
 
       const exists = Array.from(subSelect.options).some((o) => o.value === userSubtitlePref);
       subSelect.value = exists ? userSubtitlePref : 'off';
