@@ -197,6 +197,43 @@ async function getVidioAuthSession() {
   return { encryptedKey: cachedVidioApiKey, cookieHeader: cachedVidioCookies };
 }
 
+async function resolveVidioHlsFromMikrofast(id) {
+  const ua =
+    'Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36';
+  const { res: mpdRes } = await fetchRemote(`https://vidio123.mikrofast.web.id/vidio/${id}/index.mpd`, {
+    'User-Agent': ua,
+    Referer: 'https://www.vidio.com/',
+    Origin: 'https://www.vidio.com'
+  });
+  const mpdText = (await readStreamBuffer(mpdRes, mpdRes.headers['content-encoding'])).toString('utf8');
+  const baseMatch = mpdText.match(/<BaseURL>([^<]+)<\/BaseURL>/);
+  const hdntlMatch = mpdText.match(/\?(hdntl=[^"&]+)/);
+  if (!baseMatch || !hdntlMatch) {
+    throw new Error(`Mikrofast MPD token not found for channel ${id}`);
+  }
+  const baseUrl = baseMatch[1].trim();
+  const hdntl = hdntlMatch[1].replace(/&amp;/g, '&');
+  const has1080 = mpdText.includes('avc-1080p');
+  const syntheticMaster = [
+    '#EXTM3U',
+    '#EXT-X-INDEPENDENT-SEGMENTS',
+    `#EXT-X-MEDIA:TYPE=AUDIO,URI="${baseUrl}primary/aac/${hdntl}/index.m3u8",GROUP-ID="primary-audio",NAME="aac",DEFAULT=YES,AUTOSELECT=YES,CHANNELS="2"`,
+    ...(has1080
+      ? [
+          '#EXT-X-STREAM-INF:BANDWIDTH=4500000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,FRAME-RATE=25.000,AUDIO="primary-audio"',
+          `${baseUrl}primary/avc-1080p/${hdntl}/index.m3u8`
+        ]
+      : []),
+    '#EXT-X-STREAM-INF:BANDWIDTH=2500000,CODECS="avc1.64001f,mp4a.40.2",RESOLUTION=1280x720,FRAME-RATE=25.000,AUDIO="primary-audio"',
+    `${baseUrl}primary/avc-720p/${hdntl}/index.m3u8`,
+    '#EXT-X-STREAM-INF:BANDWIDTH=1100000,CODECS="avc1.64001e,mp4a.40.2",RESOLUTION=854x480,FRAME-RATE=25.000,AUDIO="primary-audio"',
+    `${baseUrl}primary/avc-480p/${hdntl}/index.m3u8`,
+    '#EXT-X-STREAM-INF:BANDWIDTH=700000,CODECS="avc1.4d401e,mp4a.40.2",RESOLUTION=640x360,FRAME-RATE=25.000,AUDIO="primary-audio"',
+    `${baseUrl}primary/avc-360p/${hdntl}/index.m3u8`
+  ].join('\n');
+  return { syntheticMaster, baseUrl };
+}
+
 async function resolveVidioHlsUrl(slug, attempt = 0) {
   try {
     const id = parseInt(slug, 10);
@@ -211,7 +248,8 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
       /\\"streamSignature\\":\{\\"clientId\\":\\"([^"\\]+)\\",\\"signature\\":\\"([^"\\]+)\\"\}/
     );
     if (!sigMatch) {
-      throw new Error(`Signature not found for Vidio channel ${slug}`);
+      const { syntheticMaster, baseUrl } = await resolveVidioHlsFromMikrofast(id);
+      return { hlsUrl: null, syntheticMaster, baseUrl };
     }
     const [, clientId, signature] = sigMatch;
 
@@ -234,7 +272,6 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
     try {
       streamJson = JSON.parse(streamText);
     } catch (_) {
-      // Fallback to api.vidio.com with cookieHeader
       const { res: apiRes } = await fetchRemote(
         `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
         {
@@ -254,15 +291,21 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
     }
     const hlsUrl = streamJson?.data?.attributes?.hls;
     if (!hlsUrl) {
-      const errTitle = streamJson?.errors?.[0]?.title || 'unavailable';
-      throw new Error(`No HLS stream returned for ${slug} (${errTitle})`);
+      // Fallback to Indonesian token relay (Mikrofast MPD -> Shaka HLS conversion) when running on Singapore Vercel
+      const { syntheticMaster, baseUrl } = await resolveVidioHlsFromMikrofast(id);
+      return { hlsUrl: null, syntheticMaster, baseUrl };
     }
-    return hlsUrl;
+    return { hlsUrl, syntheticMaster: null, baseUrl: null };
   } catch (err) {
     if (attempt < 1 && /ECONNRESET|timeout|ETIMEDOUT/i.test(err.message)) {
       cachedVidioApiKey = null;
       return resolveVidioHlsUrl(slug, attempt + 1);
     }
+    try {
+      const id = parseInt(slug, 10);
+      const { syntheticMaster, baseUrl } = await resolveVidioHlsFromMikrofast(id);
+      return { hlsUrl: null, syntheticMaster, baseUrl };
+    } catch (_) {}
     throw err;
   }
 }
@@ -427,7 +470,31 @@ const server = http.createServer(async (req, res) => {
     let step = 'init';
     try {
       step = 'resolveVidioHlsUrl';
-      const hlsUrl = await resolveVidioHlsUrl(slug);
+      const resolved = await resolveVidioHlsUrl(slug);
+      const ref = 'https://www.vidio.com/';
+      const ua =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
+      const proto = req.headers['x-forwarded-proto'] || 'http';
+      const hostPrefix =
+        req.headers.host && !req.headers.host.startsWith('localhost') ? `${proto}://${req.headers.host}` : '';
+
+      if (resolved.syntheticMaster) {
+        if (mode === 'json') {
+          res.writeHead(200, {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'no-cache, no-store, must-revalidate'
+          });
+          return res.end(JSON.stringify({ synthetic: true, baseUrl: resolved.baseUrl }));
+        }
+        const rewritten = rewriteM3u8(resolved.syntheticMaster, resolved.baseUrl, ua, ref, hostPrefix);
+        res.writeHead(200, {
+          'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        });
+        return res.end(rewritten);
+      }
+
+      const hlsUrl = resolved.hlsUrl;
       if (mode === 'json') {
         res.writeHead(200, {
           'Content-Type': 'application/json; charset=utf-8',
@@ -436,19 +503,12 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ hlsUrl }));
       }
       step = 'fetchHlsManifest';
-      const ref = 'https://www.vidio.com/';
-      const ua =
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
       const { res: remoteRes, finalUrl } = await fetchRemote(hlsUrl, {
         Referer: ref,
         'User-Agent': ua
       });
       const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
       const rawText = rawBuf.toString('utf8');
-      const proto = req.headers['x-forwarded-proto'] || 'http';
-      const hostPrefix = req.headers.host && !req.headers.host.startsWith('localhost')
-        ? `${proto}://${req.headers.host}`
-        : '';
       const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
       res.writeHead(200, {
         'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',

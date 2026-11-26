@@ -1222,17 +1222,36 @@ video.aspect-stretch {
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .np-info {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    gap: 8px;
   }
 
   .np-logo-box {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 8px;
   }
 
+  .np-title-row {
+    min-width: 0;
+    overflow: hidden;
+  }
+
   .np-title-row h2 {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+    max-width: 115px;
+  }
+
+  .np-title-row .category-tag,
+  .np-title-row .quality-tag {
+    display: none;
   }
 
   .np-meta p {
@@ -1240,7 +1259,8 @@ video.aspect-stretch {
   }
 
   .np-controls {
-    gap: 5px;
+    gap: 4px;
+    flex-shrink: 0;
     overflow-x: auto;
     scrollbar-width: none;
   }

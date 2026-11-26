@@ -99,8 +99,9 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Indosiar_2015.svg/512px-Indosiar_2015.svg.png',
     url: '/api/vidio?id=205-indosiar',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/205-indosiar/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/02.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Indosiar • Liga 1 • Mega Series • D’Academy'
   },
   {
@@ -110,8 +111,6 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://i.imgur.com/EMmOvnQ.png',
     url: '/api/vidio?id=204-sctv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/204-sctv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Siaran Resmi SCTV • Satu Untuk Semua • Sinetron & FTV'
   },
   {
@@ -121,8 +120,9 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
     url: '/api/vidio?id=782-antv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/782-antv/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/antv/index.m3u8',
+    ref: 'https://www.visionplus.id/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     subtitle: 'Siaran Resmi ANTV • Mega Bollywood • Sinema Laga & Horor'
   },
   {
@@ -132,8 +132,9 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
     url: '/api/vidio?id=8237-mentari-tv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/8237-mentari-tv/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://vidio123.mikrofast.web.id/vidio/8237/index.m3u8',
+    ref: 'https://www.vidio.com/',
+    ua: 'Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36',
     subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
   },
   {
@@ -154,9 +155,9 @@ const DEFAULT_CHANNELS = [
     category: 'News',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/INews_logo_%282023%29.svg/512px-INews_logo_%282023%29.svg.png',
-    url: 'https://linier-inews.rctiplus.id/inews-sdi.m3u8',
-    backupUrl: 'https://linier-inews.rctiplus.id/inews-sdi-avc1_100000=7-mp4a_96000=1.m3u8',
-    ref: 'https://www.rctiplus.com/',
+    url: '/api/rctiplus?id=4',
+    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/inews/index.m3u8',
+    ref: 'https://www.visionplus.id/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     subtitle: 'Siaran Resmi iNews • Berita Nasional & Sport MNC'
   },
@@ -191,8 +192,9 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://i.postimg.cc/6pycF7Vx/300px-IDTV.png',
     url: '/api/vidio?id=18280-berita-satu',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/18280-berita-satu/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h314/stream.m3u8?app_type=web&userid=lite&chname=Berita_Satu',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi BeritaSatu • News & Talkshow Nasional'
   },
   {
@@ -290,8 +292,6 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://thumbor.prod.vidiocdn.com/eG5n4xS9H9bN8t_q3tI6e5T1w-A=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/c43934.png',
     url: '/api/vidio?id=19046-sin-po-tv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/19046-sin-po-tv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Siaran Resmi Sin Po TV • Berita, Budaya & Hiburan'
   },
   {
@@ -301,9 +301,21 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://i.imgur.com/xyLLLOi.png',
     url: '/api/vidio?id=5415-jaktv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/5415-jaktv/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/jaktv/index.m3u8',
+    ref: 'https://www.visionplus.id/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     subtitle: 'Siaran Resmi JakTV • Dari Jakarta Untuk Indonesia'
+  },
+  {
+    id: 'vtv-hd',
+    name: 'VTV (Visi Media) HD',
+    category: 'Entertainment',
+    quality: 'HD',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/VTV_Indonesia_red.png',
+    url: 'https://flv.intechmedia.net/live/ch107.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Resmi VTV • Kartun Anak, Masha & Hiburan Keluarga'
   },
   {
     id: 'rock-action',
@@ -345,8 +357,6 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://i.imgur.com/JXjbUhB.png',
     url: '/api/vidio?id=7464-ajwa-tv',
-    directLocal: true,
-    vidioEmbedUrl: 'https://www.vidio.com/live/7464-ajwa-tv/embed?autoplay=true&player_only=true&mute=false',
     subtitle: 'Cermin Indahnya Islam • Siaran Religi'
   },
   {
@@ -610,15 +620,6 @@ async function playChannel(channel) {
   }, 50);
 
   showOverlay(`Menghubungkan ke ${channel.name}...`, false);
-
-  const isCloudHost =
-    window.location.hostname.endsWith('.now') || window.location.hostname.endsWith('.vercel.app');
-
-  // On Vercel cloud (24/7 even when laptop is off), play Indonesia-only Vidio channels directly via clean player with referrerPolicy="no-referrer" to bypass domain block!
-  if (isCloudHost && channel.directLocal && channel.vidioEmbedUrl) {
-    mountEmbedIframe(channel.vidioEmbedUrl);
-    return;
-  }
 
   let streamUrl = buildStreamUrl(channel);
 
