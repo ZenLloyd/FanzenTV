@@ -439,15 +439,81 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Channel Film Action & Hollywood'
   },
   {
+    id: 'k-drama-fhd',
+    name: 'K-Drama (Drakor FHD)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/6475bfec536e0c0008858e9f/colorLogoPNG.png',
+    url: 'https://jmp2.uk/plu-6475bfec536e0c0008858e9f.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Serial Drama Korea Populer 24 Jam • Romance, Comedy & Seru'
+  },
+  {
+    id: 'dramas-coreanos',
+    name: 'Dramas Coreanos (Drakor Hits)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/6185a9a88b2ce30007de5128/colorLogoPNG_1765467371603.png',
+    url: 'https://jmp2.uk/plu-6185a9a88b2ce30007de5128.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Koleksi Serial Drakor Romantis & Kisah Seru Nonstop'
+  },
+  {
     id: 'celestial-movies',
-    name: 'Celestial Movies HD',
-    category: 'Entertainment',
+    name: 'Celestial Movies HD (Dracin & Asia)',
+    category: 'Drama',
     quality: 'HD',
     logo: 'https://www.dens.tv/images/channel-logo/99.jpg',
     url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Film Box Office Mandarin & Asia'
+    subtitle: 'Drama Mandarin, Dracin, & Sinema Box Office Asia'
+  },
+  {
+    id: 'max-anime-hd',
+    name: 'MAX Anime HD (Anime & Drajap)',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/Oj3hEBh.jpg',
+    url: 'https://cdnlive.klicgo.net/maxanime/live/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Anime 24 Jam Nonstop • Serial Kartun & Cerita Petualangan Jepang'
+  },
+  {
+    id: 'anime-hidive',
+    name: 'Anime x HIDIVE',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/v0BlxCa.png',
+    url: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Anime Populer, Isekai, Pertarungan Fantasi & Sci-Fi'
+  },
+  {
+    id: 'pluto-tv-anime',
+    name: 'Pluto TV Anime',
+    category: 'Drama',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/5f12136385bccc00070142ed/colorLogoPNG_1777595293242.png',
+    url: 'https://jmp2.uk/plu-5812b7d3249444e05d09cc49.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Koleksi Serial Anime Klasik & Modern Terfavorit'
+  },
+  {
+    id: 'zee-bangla-drama',
+    name: 'Zee Bangla HD (Bollywood Drama)',
+    category: 'Drama',
+    quality: '720p',
+    logo: 'https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_ZEE_BANGLA/images/LOGO_HD/LOGO_HD_image.png',
+    url: 'https://raw.githubusercontent.com/amazeyourself/adaptive-streams/refs/heads/main/streams/in/YuppTV/ZeeBanglaHD.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Drama India, Bollywood Romance, Musikal & Cerita Keluarga'
   },
   {
     id: 'daai-tv',
@@ -790,6 +856,13 @@ async function playChannel(channel) {
     hlsInstance.loadSource(streamUrl);
     hlsInstance.attachMedia(videoPlayer);
 
+    hlsInstance.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (_, data) => {
+      const subLabel = document.getElementById('subtitlesLabel');
+      if (subLabel && data.subtitleTracks && data.subtitleTracks.length > 0) {
+        subLabel.textContent = `CC (${data.subtitleTracks.length})`;
+      }
+    });
+
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
       hideOverlay();
       if (data.levels && data.levels.length > 1) {
@@ -966,7 +1039,11 @@ function selectCategory(cat) {
 
   // Sync top category chips
   document.querySelectorAll('.cat-tab').forEach((t) => {
-    t.classList.toggle('active', t.dataset.cat === cat);
+    const isAct = t.dataset.cat.toLowerCase() === cat.toLowerCase();
+    t.classList.toggle('active', isAct);
+    if (isAct) {
+      t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
   });
 
   // Sync M3 BottomNav items
@@ -1011,12 +1088,71 @@ function bindEvents() {
     }
   });
 
-  // Category filter tabs
-  document.getElementById('categoryTabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.cat-tab');
-    if (!btn) return;
-    selectCategory(btn.dataset.cat);
-  });
+  // Category filter tabs + smooth mousewheel & drag scrolling
+  const catTabs = document.getElementById('categoryTabs');
+  if (catTabs) {
+    catTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-tab');
+      if (!btn) return;
+      selectCategory(btn.dataset.cat);
+    });
+
+    // Horizontal wheel scroll (crucial for desktop/laptop mouse users)
+    catTabs.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        catTabs.scrollLeft += e.deltaY * 1.5;
+      }
+    }, { passive: false });
+
+    // Click and drag to scroll for mouse
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    catTabs.addEventListener('mousedown', (e) => {
+      isDown = true;
+      catTabs.classList.add('grabbing');
+      startX = e.pageX - catTabs.offsetLeft;
+      scrollLeft = catTabs.scrollLeft;
+    });
+    window.addEventListener('mouseup', () => {
+      isDown = false;
+      if (catTabs) catTabs.classList.remove('grabbing');
+    });
+    catTabs.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - catTabs.offsetLeft;
+      const walk = (x - startX) * 1.6;
+      catTabs.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  // Subtitle / CC button handler
+  const subBtn = document.getElementById('subtitlesBtn');
+  const subLabel = document.getElementById('subtitlesLabel');
+  if (subBtn) {
+    subBtn.addEventListener('click', () => {
+      if (!hlsInstance) {
+        showOverlay('Pemberitahuan: Buka siaran terlebih dahulu untuk memilih subtitle.', false);
+        setTimeout(hideOverlay, 2500);
+        return;
+      }
+      const tracks = hlsInstance.subtitleTracks || [];
+      if (tracks.length === 0) {
+        showOverlay('💬 Info: Siaran live ini belum membawa trek teks bawaan. Suara dubbing / bahasa asli tetap aktif jernih.', false);
+        setTimeout(hideOverlay, 3500);
+        return;
+      }
+      const cur = hlsInstance.subtitleTrack;
+      const next = (cur + 1) >= tracks.length ? -1 : cur + 1;
+      hlsInstance.subtitleTrack = next;
+      const trackName = next === -1 ? 'OFF' : (tracks[next].name || tracks[next].lang || `Track ${next + 1}`);
+      if (subLabel) subLabel.textContent = next === -1 ? 'CC' : `CC: ${trackName}`;
+      showOverlay(`Subtitle diubah: ${trackName}`, false);
+      setTimeout(hideOverlay, 2000);
+    });
+  }
 
   // View Mode Toggle (Grid 2-kolom vs List)
   const viewGridBtn = document.getElementById('viewGridBtn');
