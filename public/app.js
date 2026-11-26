@@ -318,6 +318,17 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Siaran Resmi VTV • Kartun Anak, Masha & Hiburan Keluarga'
   },
   {
+    id: 'dens-live-event',
+    name: 'Dens Live Streaming (Event)',
+    category: 'Sports',
+    quality: 'HD',
+    logo: 'https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1745228970_tvchannels_v1.jpg',
+    url: 'https://op-flashcon-digdayahd-1.dens.tv/h/h123/live.m3u8?app_type=web&userid=lite&chname=Live_Streaming_1',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran spesial & event langsung dari Dens.TV'
+  },
+  {
     id: 'rock-action',
     name: 'ROCK Action HD',
     category: 'Entertainment',
@@ -409,6 +420,7 @@ const DEFAULT_CHANNELS = [
 let channels = [];
 let favorites = JSON.parse(localStorage.getItem('bitstream_favorites') || '[]');
 let activeCategory = 'All';
+let liveEvents = [];
 let searchQuery = '';
 let currentChannel = null;
 let useSmartProxy = true;
@@ -430,8 +442,29 @@ const proxyToggleBtn = document.getElementById('proxyToggleBtn');
 const proxyStatusText = document.getElementById('proxyStatusText');
 const qualitySelect = document.getElementById('qualitySelect');
 
+// Live Event detector (auto-pinned to top with EVENT tag)
+async function refreshLiveEvents() {
+  try {
+    const res = await fetch('/api/events');
+    const json = await res.json();
+    liveEvents = (json.events || []).map((e) => ({
+      id: e.id,
+      name: e.name,
+      category: 'Sports',
+      quality: 'LIVE',
+      logo: '',
+      url: e.url,
+      isEvent: true,
+      subtitle: 'Siaran langsung event olahraga • Live Event'
+    }));
+    renderChannelList();
+  } catch (_) {}
+}
+
 // Initialize App
 function initApp() {
+  refreshLiveEvents();
+  setInterval(refreshLiveEvents, 5 * 60 * 1000);
   const savedCustom = localStorage.getItem('bitstream_custom_channels');
   if (savedCustom) {
     try {
@@ -465,7 +498,7 @@ function getInitials(name) {
 }
 
 function getFilteredChannels() {
-  return channels.filter((ch) => {
+  return [...liveEvents, ...channels].filter((ch) => {
     const matchesSearch =
       !searchQuery ||
       ch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -508,6 +541,7 @@ function renderChannelList() {
           <div class="ch-details">
             <div class="ch-name">${ch.name}</div>
             <div class="ch-meta">
+              ${ch.isEvent ? '<span class="ch-badge event-badge">● EVENT</span>' : ''}
               <span class="ch-badge">${ch.category || 'General'}</span>
               ${ch.quality ? `<span class="ch-badge">${ch.quality}</span>` : ''}
             </div>
@@ -859,7 +893,7 @@ function bindEvents() {
     }
     const card = e.target.closest('.channel-card');
     if (card) {
-      const ch = channels.find((c) => c.id === card.dataset.id);
+      const ch = [...liveEvents, ...channels].find((c) => c.id === card.dataset.id);
       if (ch) playChannel(ch);
     }
   });

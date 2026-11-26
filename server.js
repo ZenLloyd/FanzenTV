@@ -310,6 +310,48 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
   }
 }
 
+// ---- Live Event detection (Vidio /live page) ----
+const KNOWN_CHANNEL_IDS = new Set([
+  '205','204','733','665','734','783','782','870','206','777','778','874','5409','1561','6441','8237',
+  '18280','875','6410','5415','6165','18162','19046','7464','7052','6397'
+]);
+// Paywalled Vidio sports channels: never touched (no login/paywall bypass)
+const PREMIUM_SPORT_RE = /champions-tv|premier-league-tv|champions-fight|spotv|bein|-tv-\d+$/i;
+const EVENT_RE = /(grand-prix|championship|cup|league|liga|final|series|open|masters|international|round|semi|vs|world|superliga|piala|badminton|basket|voli|proliga|motogp|f1)/i;
+let eventsCache = { at: 0, data: [] };
+
+function prettifySlug(slug) {
+  return slug
+    .replace(/^\d+-/, '')
+    .split('-')
+    .map((w) => (w.length <= 3 && /^(vs|bwf|hss|tv)$/i.test(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ');
+}
+
+async function getLiveEvents() {
+  if (Date.now() - eventsCache.at < 3 * 60 * 1000) return eventsCache.data;
+  const { res } = await fetchRemote('https://www.vidio.com/live', { Referer: 'https://www.vidio.com/' });
+  const html = (await readStreamBuffer(res, res.headers['content-encoding'])).toString('utf8');
+  const slugs = [...new Set([...html.matchAll(/\/live\/(\d+-[a-z0-9-]+)/g)].map((m) => m[1]))];
+  const candidates = slugs
+    .filter((s) => !KNOWN_CHANNEL_IDS.has(s.split('-')[0]))
+    .filter((s) => !PREMIUM_SPORT_RE.test(s) && EVENT_RE.test(s))
+    .slice(0, 8);
+  const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+  const checked = await Promise.all(
+    candidates.map(async (slug) => {
+      try {
+        await withTimeout(resolveVidioHlsUrl(slug), 12000);
+        return { id: 'event-' + slug.split('-')[0], slug, name: prettifySlug(slug), url: `/api/vidio?id=${slug}` };
+      } catch (_) {
+        return null;
+      }
+    })
+  );
+  eventsCache = { at: Date.now(), data: checked.filter(Boolean) };
+  return eventsCache.data;
+}
+
 function rewriteM3u8(content, baseUrl, ua, ref, hostPrefix = '', cookie = '') {
   const lines = content.split(/\r?\n/);
   const buildProxyUrl = (rawTarget) => {
@@ -520,6 +562,18 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ error: err.message, step }));
+    }
+  }
+
+  // Live Sports/Event detector: scans Vidio's public live page and only returns events that actually play (free ones)
+  if (reqUrl.pathname === '/api/events') {
+    try {
+      const events = await getLiveEvents();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=120' });
+      return res.end(JSON.stringify({ events, updated: Date.now() }));
+    } catch (err) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ events: [], error: err.message }));
     }
   }
 
