@@ -451,16 +451,25 @@ const DEFAULT_CHANNELS = [
   },
   {
     id: 'mango-tv',
-    name: 'Mango TV (Hunan TV / 芒果TV)',
+    name: 'Mango TV Drama (芒果电视剧)',
     category: 'Drama',
-    quality: '1080p',
+    quality: 'HD',
     logo: 'https://parco-zh.github.io/demo/HNWS.png',
-    url: 'https://hlsal-ldvt.qing.mgtv.com/nn_live/nn_x64/dWlwPTEyNy4wLjAuMSZ1aWQ9cWluZy1jbXMmbm5fdGltZXpvbmU9OCZjZG5leF9pZD1hbF9obHNfbGR2dCZ1dWlkPTliODY4NmU5ZTM2YzYwMmMmZT02OTE0NjA0JnY9MSZpZD1ITldTWkdTVCZzPTcwN2RiYTc2YzJjNmJmMTQ4MmUyZGYzOWU2NWM3YWFi/HNWSZGST.m3u8',
+    url: 'https://liveapi.mgtv.com/',
+    mgtvId: 484,
     directLocal: true,
-    backupUrl: 'https://p8.vzan.com/slowlive/415983998730568937/live.m3u8',
-    ref: 'https://www.mgtv.com/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi Mango TV / Hunan TV • Drama Romantis & Variety Show Populer'
+    subtitle: 'Siaran Resmi Mango TV Drama 24 Jam • Serial Dracin Romantis & Hits'
+  },
+  {
+    id: 'mango-tv-intl',
+    name: 'Mango TV Intl (湖南国际 / 芒果TV)',
+    category: 'Drama',
+    quality: 'HD',
+    logo: 'https://parco-zh.github.io/demo/HNWS.png',
+    url: 'https://liveapi.mgtv.com/',
+    mgtvId: 229,
+    directLocal: true,
+    subtitle: 'Siaran Resmi Mango TV / Hunan TV • Variety Show & Drama Populer'
   },
   {
     id: 'cctv8-dracin',
@@ -974,6 +983,44 @@ function mountEmbedIframe(embedUrl) {
   document.getElementById('videoWrapper').appendChild(iframe);
 }
 
+async function fetchJsonp(url, timeoutMs = 6000) {
+  return new Promise((resolve, reject) => {
+    const cbName = '__mgtv_cb_' + Math.random().toString(36).slice(2, 10);
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('JSONP timeout'));
+    }, timeoutMs);
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[cbName] = (data) => {
+      cleanup();
+      resolve(data);
+    };
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('JSONP error'));
+    };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cbName;
+    document.head.appendChild(script);
+  });
+}
+
+async function resolveMgtvLiveUrl(channelId) {
+  const base = `https://liveapi.mgtv.com/v1/epg/turnplay/getLivePlayUrlMPP?version=PCPlayer&platform=1&buss_id=2000001&definition=std&channel_id=${channelId}`;
+  let json = await fetchJsonp(base);
+  if (json && json.data && json.data.url && json.data.url.includes('qq') && json.data.npuk) {
+    json = await fetchJsonp(`${base}&npuk=${encodeURIComponent(json.data.npuk)}`);
+  }
+  if (json && json.data && json.data.url) {
+    return json.data.url.replace(/^http:/, 'https:');
+  }
+  throw new Error('Mango TV stream not available');
+}
+
 async function playChannel(channel) {
   if (!channel) return;
   currentChannel = channel;
@@ -994,6 +1041,15 @@ async function playChannel(channel) {
   showOverlay(`Menghubungkan ke ${channel.name}...`, false);
 
   let streamUrl = buildStreamUrl(channel);
+  if (channel.mgtvId) {
+    try {
+      streamUrl = await resolveMgtvLiveUrl(channel.mgtvId);
+      if (currentChannel !== channel) return;
+    } catch (_) {
+      showOverlay(`Gagal memuat token siaran ${channel.name}.`, true);
+      return;
+    }
+  }
 
   if (hlsInstance) {
     hlsInstance.destroy();
