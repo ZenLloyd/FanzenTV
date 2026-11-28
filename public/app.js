@@ -243,9 +243,9 @@ const DEFAULT_CHANNELS = [
     name: 'Zhejiang TV (浙江卫视)',
     category: 'China',
     quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Zhejiang_ Television_logo.svg/512px-Zhejiang_Television_logo.svg.png',
-    url: 'https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8',
-    backupUrl: 'http://74.91.26.218:82/live/zjwshd.m3u8',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Zhejiang_Television_logo.svg/512px-Zhejiang_Television_logo.svg.png',
+    url: 'http://74.91.26.218:82/live/zjwshd.m3u8',
+    backupUrl: 'https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8',
     ref: '',
     ua: '',
     subtitle: 'Zhejiang Satellite TV • Keep Running, Variety Show & Drama China'
