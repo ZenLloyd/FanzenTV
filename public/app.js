@@ -1,88 +1,550 @@
-// Curated Core Indonesian TV Channels (100% Cloud-Ready 24/7 on Vercel + Auto-Fallback)
+// Curated TV Channels Organized by Region & Focus (Indonesia, China, Korea, Jepang, Sports, News, Daerah)
 const DEFAULT_CHANNELS = [
+  // ==================== INDONESIA ====================
   {
     id: 'rcti-hd',
-    name: 'RCTI HD',
-    category: 'Nasional',
+    name: 'RCTI',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/RCTI_logo_2015.svg/512px-RCTI_logo_2015.svg.png',
     url: '/api/rctiplus?id=1',
     directLocal: false,
-    subtitle: 'Siaran Resmi RCTI • Timnas Indonesia • MasterChef • Sinetron'
+    subtitle: 'Siaran Nasional • Timnas Indonesia, MasterChef & Sinetron'
   },
   {
     id: 'mnctv-hd',
-    name: 'MNCTV HD',
-    category: 'Nasional',
+    name: 'MNCTV',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/MNCTV_logo_2015.svg/512px-MNCTV_logo_2015.svg.png',
     url: '/api/rctiplus?id=2',
     backupUrl: 'https://linier-mnctv.rctiplus.id/mnctv-sdi.m3u8',
     ref: 'https://www.rctiplus.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi MNCTV • Upin & Ipin • Family 100 • Liga Futsal'
+    subtitle: 'Siaran Nasional • Upin & Ipin, Family 100 & Liga Futsal'
   },
   {
     id: 'gtv-hd',
-    name: 'GTV HD',
-    category: 'Nasional',
+    name: 'GTV',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://i.imgur.com/jjuKnYs.png',
     url: '/api/rctiplus?id=3',
     backupUrl: 'https://linier-gtv.rctiplus.id/gtv-sdi.m3u8',
     ref: 'https://www.rctiplus.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi GTV • SpongeBob • Super Deal • Big Movies'
+    subtitle: 'Siaran Nasional • SpongeBob, Super Deal & Big Movies'
   },
   {
     id: 'trans7-hd',
-    name: 'Trans7 HD',
-    category: 'Nasional',
+    name: 'Trans7',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://i.imgur.com/fAbGImS.png',
     url: 'https://live.cnbcindonesia.com/trans7/smil:trans7.smil/playlist.m3u8',
     ref: 'https://www.cnbcindonesia.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-    subtitle: 'Siaran Resmi Trans7 • Lapor Pak! • MotoGP • On The Spot'
+    subtitle: 'Siaran Nasional • Lapor Pak!, MotoGP & On The Spot'
   },
   {
     id: 'transtv-hd',
-    name: 'Trans TV HD',
-    category: 'Nasional',
+    name: 'Trans TV',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/62/Trans_TV_2013.svg/512px-Trans_TV_2013.svg.png',
     url: 'https://live.cnbcindonesia.com/transtv/smil:transtv.smil/playlist.m3u8',
     ref: 'https://www.cnbcindonesia.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-    subtitle: 'Siaran Resmi Trans TV • Bioskop Trans TV • Brownis'
+    subtitle: 'Siaran Nasional • Bioskop Trans TV & Brownis'
+  },
+  {
+    id: 'indosiar-hd',
+    name: 'Indosiar',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Indosiar_2015.svg/512px-Indosiar_2015.svg.png',
+    url: '/api/vidio?id=205-indosiar',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/02.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran Nasional • BRI Liga 1, Mega Series & D’Academy'
+  },
+  {
+    id: 'sctv-hd',
+    name: 'SCTV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/EMmOvnQ.png',
+    url: '/api/vidio?id=204-sctv',
+    subtitle: 'Siaran Nasional • Sinetron, FTV & Liputan 6'
+  },
+  {
+    id: 'antv-hd',
+    name: 'ANTV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran Nasional • Mega Bollywood, Sinema Laga & Hiburan'
   },
   {
     id: 'mdtv-net-hd',
-    name: 'MDTV / NET. HD',
-    category: 'Nasional',
+    name: 'MDTV / NET.',
+    category: 'Indonesia',
     quality: '720p50',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MDTV_logo.svg/512px-MDTV_logo.svg.png',
     url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/index.m3u8',
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/02.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi MDTV / NET. • 720p 50fps Smooth • Drama & Hiburan Keluarga'
+    subtitle: 'Siaran Nasional • Drama & Hiburan Keluarga'
   },
   {
     id: 'rtv-hd',
-    name: 'RTV (Rajawali TV) HD',
-    category: 'Nasional',
+    name: 'RTV (Rajawali TV)',
+    category: 'Indonesia',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/RTV_Indonesia_logo.svg/512px-RTV_Indonesia_logo.svg.png',
     url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi RTV • Kartun Anak • Anime & Tokusatsu'
+    subtitle: 'Siaran Nasional • Kartun Anak, Anime & Tokusatsu'
+  },
+  {
+    id: 'mentari-tv',
+    name: 'Mentari TV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h17/index.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran Nasional • Kartun Anak & Keluarga'
+  },
+  {
+    id: 'tvri-nasional',
+    name: 'TVRI Nasional',
+    category: 'Indonesia',
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
+    url: 'https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8',
+    backupUrl: '/api/vidio?id=6441-tvri',
+    directLocal: true,
+    ref: '',
+    ua: '',
+    subtitle: 'Televisi Republik Indonesia • Siaran Nasional'
+  },
+  {
+    id: 'btv-hd',
+    name: 'BTV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BTV_%28Indonesia%29_logo_%282025%29.svg/512px-BTV_%28Indonesia%29_logo_%282025%29.svg.png',
+    url: 'https://lnd0t3b922.tenbytecdn.com/ta-sg1/90369cf5-6ac2-411d-b3d0-15fae10a2e2c/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'B-Universe • Berita & Hiburan Nasional'
+  },
+  {
+    id: 'garuda-tv',
+    name: 'Garuda TV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/sXsAcZ3.png',
+    url: 'https://hgmtv.com:19360/garudatvlivestreaming/garudatvlivestreaming.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Nasional • Berita & Dokumenter Indonesia'
+  },
+  {
+    id: 'nusantara-tv',
+    name: 'Nusantara TV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/viun5hj.png',
+    url: 'https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Digital Nasional'
+  },
+  {
+    id: 'sinpo-tv',
+    name: 'Sin Po TV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://thumbor.prod.vidiocdn.com/eG5n4xS9H9bN8t_q3tI6e5T1w-A=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/c43934.png',
+    url: '/api/vidio?id=19046-sin-po-tv',
+    subtitle: 'Siaran Nasional • Berita, Budaya & Hiburan'
+  },
+  {
+    id: 'vtv-hd',
+    name: 'VTV',
+    category: 'Indonesia',
+    quality: 'HD',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/VTV_Indonesia_red.png',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h16/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Visi Media • Kartun Anak & Hiburan Keluarga'
+  },
+  {
+    id: 'rock-action',
+    name: 'ROCK Action',
+    category: 'Indonesia',
+    quality: 'HD',
+    logo: 'https://www.dens.tv/images/channel-logo/44.jpg',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Saluran Film Action & Box Office Hollywood'
+  },
+  {
+    id: 'daai-tv',
+    name: 'DAAI TV Indonesia',
+    category: 'Indonesia',
+    quality: 'HD',
+    logo: 'https://i.imgur.com/YC7JCHo.png',
+    url: 'https://pull.daaiplus.com/live-DAAIPLUS/live-DAAIPLUS_HD.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Dokumenter & Drama Keluarga'
+  },
+  {
+    id: 'ajwa-tv',
+    name: 'Ajwa TV',
+    category: 'Indonesia',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/JXjbUhB.png',
+    url: '/api/vidio?id=7464-ajwa-tv',
+    subtitle: 'Siaran Religi Islam Indonesia'
+  },
+  {
+    id: 'rodja-tv',
+    name: 'Rodja TV',
+    category: 'Indonesia',
+    quality: '720p',
+    logo: 'https://i.imgur.com/XwCeHlC.png',
+    url: 'https://rodjatv.com/rodjatv/live.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Kajian Islam'
+  },
+
+  // ==================== CHINA ====================
+  {
+    id: 'zhejiang-tv',
+    name: 'Zhejiang TV (浙江卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Zhejiang_ Television_logo.svg/512px-Zhejiang_Television_logo.svg.png',
+    url: 'https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8',
+    backupUrl: 'http://74.91.26.218:82/live/zjwshd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Zhejiang Satellite TV • Keep Running, Variety Show & Drama China'
+  },
+  {
+    id: 'hunan-tv',
+    name: 'Hunan TV (湖南卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://parco-zh.github.io/demo/HNWS.png',
+    url: 'http://74.91.26.218:82/live/hnwshd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Hunan Satellite TV • Drama Mandarin Utama & Variety Show'
+  },
+  {
+    id: 'mango-tv',
+    name: 'Mango TV Drama (芒果电视剧)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://parco-zh.github.io/demo/HNWS.png',
+    url: 'https://liveapi.mgtv.com/',
+    mgtvId: 484,
+    directLocal: true,
+    subtitle: 'Mango TV 24 Jam • Serial Drama China Romantis & Modern'
+  },
+  {
+    id: 'mango-tv-intl',
+    name: 'Mango TV Intl (湖南国际)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://parco-zh.github.io/demo/HNWS.png',
+    url: 'https://liveapi.mgtv.com/',
+    mgtvId: 229,
+    directLocal: true,
+    subtitle: 'Hunan TV International • Variety Show & Drama China'
+  },
+  {
+    id: 'dragon-tv',
+    name: 'Dragon TV (东方卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/zh/thumb/6/6f/Dragon_ Television_logo.svg/512px-Dragon_Television_logo.svg.png',
+    url: 'http://74.91.26.218:82/live/dfwshd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Shanghai Dragon TV • Serial Drama & Hiburan Mandarin'
+  },
+  {
+    id: 'jiangsu-tv',
+    name: 'Jiangsu TV (江苏卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/zh/thumb/9/9e/Jiangsu_Television_logo.svg/512px-Jiangsu_Television_logo.svg.png',
+    url: 'http://74.91.26.218:82/live/jswshd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Jiangsu Satellite TV • Drama Romantis & Reality Show China'
+  },
+  {
+    id: 'cctv8-dracin',
+    name: 'CCTV-8 Drama (央视八套)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/GyHaZ8X.png',
+    url: 'http://74.91.26.218:82/live/cctv8hd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'CCTV-8 • Saluran Khusus Serial Drama Tiongkok 24 Jam'
+  },
+  {
+    id: 'cctv6-movie',
+    name: 'CCTV-6 Movie (央视六套)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/rFiaef7.png',
+    url: 'http://74.91.26.218:82/live/cctv6hd.m3u8',
+    backupUrl: 'http://38.75.136.137:98/gslb/dsdqpub/dyjc.m3u8?auth=testpub',
+    ref: '',
+    ua: '',
+    subtitle: 'CCTV-6 • Film Box Office & Sinema Mandarin'
+  },
+  {
+    id: 'cctv3-variety',
+    name: 'CCTV-3 Variety (央视三套)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/GyHaZ8X.png',
+    url: 'http://74.91.26.218:82/live/cctv3hd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'CCTV-3 • Musik, Komedi & Variety Show Tiongkok'
+  },
+  {
+    id: 'cctv-storm-dracin',
+    name: 'CCTV Storm Theater (风云剧场)',
+    category: 'China',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/rEttkKm.png',
+    url: 'http://38.75.136.137:98/gslb/dsdqpub/fyjc.m3u8?auth=testpub',
+    ref: '',
+    ua: '',
+    subtitle: 'Serial Drama Wuxia, Kolosal & Aksi Tiongkok'
+  },
+  {
+    id: 'guangdong-tv',
+    name: 'Guangdong TV (广东卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: '',
+    url: 'http://74.91.26.218:82/live/gdwshd.m3u8',
+    backupUrl: 'https://h5cul1yar48um3t.wcetv.com/hls/gdsatellite.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Guangdong Satellite TV • Drama & Hiburan Tiongkok Selatan'
+  },
+  {
+    id: 'shenzhen-tv',
+    name: 'Shenzhen TV (深圳卫视)',
+    category: 'China',
+    quality: '1080p',
+    logo: '',
+    url: 'http://74.91.26.218:82/live/szwshd.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Shenzhen Satellite TV • Serial Drama & Lifestyle Modern'
+  },
+  {
+    id: 'celestial-movies',
+    name: 'Celestial Movies',
+    category: 'China',
+    quality: 'HD',
+    logo: 'https://www.dens.tv/images/channel-logo/99.jpg',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Sinema Hong Kong & Box Office Mandarin'
+  },
+
+  // ==================== KOREA ====================
+  {
+    id: 'mbc-drama-kr',
+    name: 'MBC Korea',
+    category: 'Korea',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/MBCNET_%EB%A1%9C%EA%B3%A0.svg/512px-MBCNET_%EB%A1%9C%EA%B3%A0.svg.png',
+    url: 'https://cdn-us-east-prod-ingest-infra-dacast-com.akamaized.net/624ff8f9-db18-da92-4d42-896fa2ff3eb3/source/index.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Munhwa Broadcasting Corp • K-Drama, Variety & Siaran Korea'
+  },
+  {
+    id: 'sbs-kbc-kr',
+    name: 'SBS KBC Korea',
+    category: 'Korea',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/SBS_Logo_%282010%29.svg/512px-SBS_Logo_%282010%29.svg.png',
+    url: 'https://vod.ikbc.co.kr/KBCTV/tv/playlist.m3u8',
+    backupUrl: 'https://stream.ubc.co.kr/hls/ubctvstream/index.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'SBS Network Korea • Drama Korea, Inkigayo & Hiburan'
+  },
+  {
+    id: 'mbc-daejeon-kr',
+    name: 'MBC Daejeon (대전MBC)',
+    category: 'Korea',
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/MBCNET_%EB%A1%9C%EA%B3%A0.svg/512px-MBCNET_%EB%A1%9C%EA%B3%A0.svg.png',
+    url: 'https://ns1.tjmbc.co.kr/live/myStream.sdp/playlist.m3u8',
+    backupUrl: 'https://stream.chmbc.co.kr/TV/myStream/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'MBC Regional Network • Drama & Program TV Korea Selatan'
+  },
+  {
+    id: 'arirang-tv-kr',
+    name: 'Arirang TV',
+    category: 'Korea',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Arirang_TV_logo.svg/512px-Arirang_TV_logo.svg.png',
+    url: 'http://amdlive-ch01.ctnd.com.edgesuite.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8',
+    backupUrl: 'https://freem3u.xyz/api/live/play.m3u8?vid=111',
+    ref: '',
+    ua: '',
+    subtitle: 'K-Pop, Simply K-Pop, Budaya & Hiburan Korea Selatan'
+  },
+  {
+    id: 'ktv-korea',
+    name: 'KTV Korea (국민방송)',
+    category: 'Korea',
+    quality: '1080p',
+    logo: '',
+    url: 'https://hlive.ktv.go.kr/live/klive_h.stream/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Korean National Broadcast • Dokumenter & Budaya Korea'
+  },
+  {
+    id: 'ebs-korea',
+    name: 'EBS 1TV Korea',
+    category: 'Korea',
+    quality: '720p',
+    logo: '',
+    url: 'https://ebsonair.ebs.co.kr/ebs1familypc/familypc1m/playlist.m3u8',
+    backupUrl: 'https://ebsonair.ebs.co.kr/plus1familypc/familypc1m/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Educational Broadcasting System • Edukasi & Keluarga Korea'
+  },
+
+  // ==================== JEPANG ====================
+  {
+    id: 'nhk-world-jp',
+    name: 'NHK World Japan',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/NHK_World-Japan_logo_2020.svg/512px-NHK_World-Japan_logo_2020.svg.png',
+    url: '/api/vidio?id=7968-nhk-world-japan',
+    backupUrl: 'https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Resmi NHK Tokyo • Budaya, Dokumenter & Berita Jepang'
+  },
+  {
+    id: 'max-anime-hd',
+    name: 'Anime Movies & Series JP',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/Oj3hEBh.jpg',
+    url: 'https://jmp2.uk/plu-67ed8f7e443f0671bc2b2368.m3u8',
+    backupUrl: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Anime 24 Jam • Audio Jepang Asli & Subtitle CC'
+  },
+  {
+    id: 'anime-hidive',
+    name: 'Anime x HIDIVE',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/v0BlxCa.png',
+    url: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Serial Anime Isekai, Action & Sci-Fi'
+  },
+  {
+    id: 'pluto-tv-anime',
+    name: 'Pluto TV Anime',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/5f12136385bccc00070142ed/colorLogoPNG_1777595293242.png',
+    url: 'https://jmp2.uk/plu-5812b7d3249444e05d09cc49.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Serial Anime Klasik & Populer'
+  },
+  {
+    id: 'cgntv-japan',
+    name: 'CGNTV Japan',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: '',
+    url: 'https://d2p4mrcwl6ly4.cloudfront.net/out/v1/8d50f69fdbbf411a8d302743e4263716/CGNWebLiveJP.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Televisi Bahasa Jepang 24 Jam'
+  },
+  {
+    id: 'qvc-japan',
+    name: 'QVC Japan (QVCジャパン)',
+    category: 'Jepang',
+    quality: '1080p',
+    logo: '',
+    url: 'https://d1flvb4iqlercm.cloudfront.net/live/live_1080p_2nd.m3u8',
+    backupUrl: 'https://stream3.shopch.jp/HLS/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Siaran Live Lifestyle & Produk Jepang (Chiba, Tokyo)'
+  },
+
+  // ==================== SPORTS ====================
+  {
+    id: 'tvri-sport',
+    name: 'TVRI Sport',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/TVRI_Sport_2022.svg/512px-TVRI_Sport_2022.svg.png',
+    url: 'https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8',
+    directLocal: true,
+    ref: '',
+    ua: '',
+    subtitle: 'BWF Badminton • Olahraga Nasional & Internasional'
   },
   {
     id: 'moji-hd',
-    name: 'MOJI HD',
+    name: 'MOJI',
     category: 'Sports',
     quality: '720p50',
     logo: 'https://i.imgur.com/mM9zapJ.png',
@@ -90,53 +552,121 @@ const DEFAULT_CHANNELS = [
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/02.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi MOJI • 720p 50fps Smooth • Voli Proliga, VNL & Olahraga'
+    subtitle: 'Voli Proliga, VNL & Olahraga'
   },
   {
-    id: 'indosiar-hd',
-    name: 'Indosiar FHD',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Indosiar_2015.svg/512px-Indosiar_2015.svg.png',
-    url: '/api/vidio?id=205-indosiar',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/02.m3u8',
+    id: 'dens-live-event',
+    name: 'Dens Live Event',
+    category: 'Sports',
+    quality: 'HD',
+    logo: 'https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1745228970_tvchannels_v1.jpg',
+    url: 'https://op-flashcon-digdayahd-1.dens.tv/h/h123/live.m3u8?app_type=web&userid=lite&chname=Live_Streaming_1',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi Indosiar • Liga 1 • Mega Series • D’Academy'
+    subtitle: 'Siaran Event Langsung Dens.TV'
   },
   {
-    id: 'sctv-hd',
-    name: 'SCTV FHD',
-    category: 'Nasional',
+    id: 'bein-sports-xtra',
+    name: 'beIN SPORTS XTRA',
+    category: 'Sports',
     quality: '1080p',
-    logo: 'https://i.imgur.com/EMmOvnQ.png',
-    url: '/api/vidio?id=204-sctv',
-    subtitle: 'Siaran Resmi SCTV • Satu Untuk Semua • Sinetron & FTV'
+    logo: 'https://i.ibb.co/HT49GPmB/XTRA-2.png',
+    url: 'https://bein-xtra-bein.amagi.tv/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Football, Motorsport & Sports'
   },
   {
-    id: 'antv-hd',
-    name: 'ANTV FHD',
-    category: 'Nasional',
+    id: 'bein-sports-xtra-es',
+    name: 'beIN SPORTS XTRA ES',
+    category: 'Sports',
     quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/index.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi ANTV / Viva Group • Mega Bollywood • Sinema & Hiburan'
+    logo: 'https://i.imgur.com/V562tpO.png',
+    url: 'https://dc1644a9jazgj.cloudfront.net/beIN_Sports_Xtra_Espanol.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'beIN Sports • Live Matches & Deportes'
   },
   {
-    id: 'mentari-tv',
-    name: 'Mentari TV FHD',
-    category: 'Entertainment',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h17/index.m3u8',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi Mentari / Kids TV • Kartun Anak & Keluarga'
+    id: 'cbs-golazo',
+    name: 'CBS Sports Golazo',
+    category: 'Sports',
+    quality: '720p',
+    logo: 'https://i.imgur.com/eMjutHS.png',
+    url: 'https://jmp2.uk/plu-63a0e33a45264d000850ed7e.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'UEFA Champions League, Serie A & 24/7 Football'
   },
+  {
+    id: 'fubo-sports',
+    name: 'Fubo Sports Network',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/qFNRJLb.png',
+    url: 'http://107.167.16.138/fubosportsnetwork/index.m3u8?token=test',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h71/wedo_sport.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Sports, Matches & Combat Highlights'
+  },
+  {
+    id: 'fightbox-hd',
+    name: 'FightBox HD',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/mRsnztA.png',
+    url: 'https://nosignal1.antenaplay.ro/hls/fightbox-hd/index.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'MMA, Kickboxing, Boxing & Martial Arts'
+  },
+  {
+    id: 'glory-kickboxing',
+    name: 'Glory Kickboxing',
+    category: 'Sports',
+    quality: '720p',
+    logo: 'https://i.imgur.com/tS7Ub7i.png',
+    url: 'https://6f972d29.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0dsb3J5S2lja2JveGluZ19ITFM/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Championship Kickboxing Live'
+  },
+  {
+    id: 'redbull-tv',
+    name: 'Red Bull TV',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://images.pluto.tv/channels/5e7cb84a172a0f0007da69e4/colorLogoPNG.png',
+    url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Action Sports, Rally, Moto & Extreme Sports'
+  },
+  {
+    id: 'floracing',
+    name: 'FloRacing',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://images.fubo.tv/channel-config-ui/station-logos/on-dark/floracing-white.png',
+    url: 'https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Motorsports, Dirt Track & Drag Racing'
+  },
+  {
+    id: 'tennis-channel',
+    name: 'Tennis Channel',
+    category: 'Sports',
+    quality: '1080p',
+    logo: 'https://i.imgur.com/tsljAnY.png',
+    url: 'https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg01444-tennischannelth-tennischannelnl-samsungnl/playlist.m3u8',
+    ref: '',
+    ua: '',
+    subtitle: 'Live Tennis, Grand Slam & ATP/WTA Tours'
+  },
+
+  // ==================== NEWS (BERITA) ====================
   {
     id: 'kompas-tv-hd',
     name: 'Kompas TV',
@@ -147,23 +677,11 @@ const DEFAULT_CHANNELS = [
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/s/s104/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi Kompas TV • Independen Terpercaya'
-  },
-  {
-    id: 'inews-hd',
-    name: 'iNews TV HD',
-    category: 'News',
-    quality: '720p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/INews_logo_%282023%29.svg/512px-INews_logo_%282023%29.svg.png',
-    url: '/api/rctiplus?id=4',
-    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/inews/index.m3u8',
-    ref: 'https://www.visionplus.id/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi iNews • Berita Nasional & Sport MNC'
+    subtitle: 'Berita Nasional • Independen Terpercaya'
   },
   {
     id: 'metrotv-hd',
-    name: 'Metro TV HD',
+    name: 'Metro TV',
     category: 'News',
     quality: '720p',
     logo: 'https://i.imgur.com/QnU70NI.png',
@@ -171,11 +689,11 @@ const DEFAULT_CHANNELS = [
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi Metro TV • Knowledge to Elevate'
+    subtitle: 'Berita Nasional • Knowledge to Elevate'
   },
   {
     id: 'tvone-hd',
-    name: 'tvOne HD',
+    name: 'tvOne',
     category: 'News',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TvOne_2023.svg/512px-TvOne_2023.svg.png',
@@ -183,19 +701,19 @@ const DEFAULT_CHANNELS = [
     backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi tvOne • Apa Kabar Indonesia'
+    subtitle: 'Berita Nasional • Apa Kabar Indonesia'
   },
   {
-    id: 'beritasatu-hd',
-    name: 'BeritaSatu (B-Universe) FHD',
+    id: 'inews-hd',
+    name: 'iNews TV',
     category: 'News',
-    quality: '1080p',
-    logo: 'https://i.postimg.cc/6pycF7Vx/300px-IDTV.png',
-    url: '/api/vidio?id=18280-berita-satu',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h314/stream.m3u8?app_type=web&userid=lite&chname=Berita_Satu',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi BeritaSatu • News & Talkshow Nasional'
+    quality: '720p',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/INews_logo_%282023%29.svg/512px-INews_logo_%282023%29.svg.png',
+    url: '/api/rctiplus?id=4',
+    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/inews/index.m3u8',
+    ref: 'https://www.visionplus.id/',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    subtitle: 'Berita Nasional & Olahraga MNC'
   },
   {
     id: 'cnn-indonesia',
@@ -222,40 +740,16 @@ const DEFAULT_CHANNELS = [
     subtitle: 'Ekonomi, Bisnis, Saham & Market Update'
   },
   {
-    id: 'btv-hd',
-    name: 'BTV (B-Universe)',
-    category: 'Nasional',
+    id: 'beritasatu-hd',
+    name: 'BeritaSatu',
+    category: 'News',
     quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/BTV_%28Indonesia%29_logo_%282025%29.svg/512px-BTV_%28Indonesia%29_logo_%282025%29.svg.png',
-    url: 'https://lnd0t3b922.tenbytecdn.com/ta-sg1/90369cf5-6ac2-411d-b3d0-15fae10a2e2c/master.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Berita & Hiburan Nasional Full HD'
-  },
-  {
-    id: 'tvri-nasional',
-    name: 'TVRI Nasional',
-    category: 'Nasional',
-    quality: '720p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
-    url: 'https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8',
-    backupUrl: '/api/vidio?id=6441-tvri',
-    directLocal: true,
-    ref: '',
-    ua: '',
-    subtitle: 'Media Pemersatu Bangsa • Siaran Nasional'
-  },
-  {
-    id: 'tvri-sport',
-    name: 'TVRI Sport HD',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/TVRI_Sport_2022.svg/512px-TVRI_Sport_2022.svg.png',
-    url: 'https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8',
-    directLocal: true,
-    ref: '',
-    ua: '',
-    subtitle: 'BWF Badminton • Olahraga Nasional & Dunia'
+    logo: 'https://i.postimg.cc/6pycF7Vx/300px-IDTV.png',
+    url: '/api/vidio?id=18280-berita-satu',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h314/stream.m3u8?app_type=web&userid=lite&chname=Berita_Satu',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'B-Universe • News & Talkshow Nasional'
   },
   {
     id: 'tvri-world',
@@ -270,40 +764,11 @@ const DEFAULT_CHANNELS = [
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Indonesian English Broadcast Channel'
   },
-  {
-    id: 'garuda-tv',
-    name: 'Garuda TV',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/sXsAcZ3.png',
-    url: 'https://hgmtv.com:19360/garudatvlivestreaming/garudatvlivestreaming.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Berita Nasional & Inspirasi Indonesia'
-  },
-  {
-    id: 'nusantara-tv',
-    name: 'Nusantara TV (NTV)',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/viun5hj.png',
-    url: 'https://nusantaratv.siar.us/nusantaratv/live/playlist.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Sahabat Kita • TV Digital Nasional'
-  },
-  {
-    id: 'sinpo-tv',
-    name: 'Sin Po TV FHD',
-    category: 'Nasional',
-    quality: '1080p',
-    logo: 'https://thumbor.prod.vidiocdn.com/eG5n4xS9H9bN8t_q3tI6e5T1w-A=/230x230/filters:quality(70)/vidio-web-prod-livestreaming/uploads/livestreaming/square_image/19046/c43934.png',
-    url: '/api/vidio?id=19046-sin-po-tv',
-    subtitle: 'Siaran Resmi Sin Po TV • Berita, Budaya & Hiburan'
-  },
+
+  // ==================== DAERAH ====================
   {
     id: 'jaktv-fhd',
-    name: 'JakTV Jakarta FHD',
+    name: 'JakTV Jakarta',
     category: 'Daerah',
     quality: '1080p',
     logo: 'https://i.imgur.com/xyLLLOi.png',
@@ -311,297 +776,7 @@ const DEFAULT_CHANNELS = [
     backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/jaktv/index.m3u8',
     ref: 'https://www.visionplus.id/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    subtitle: 'Siaran Resmi JakTV • Dari Jakarta Untuk Indonesia'
-  },
-  {
-    id: 'vtv-hd',
-    name: 'VTV (Visi Media) HD',
-    category: 'Entertainment',
-    quality: 'HD',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/VTV_Indonesia_red.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h16/index.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi VTV / Family • Kartun Anak, Masha & Hiburan Keluarga'
-  },
-  {
-    id: 'dens-live-event',
-    name: 'Dens Live Streaming (Event)',
-    category: 'Sports',
-    quality: 'HD',
-    logo: 'https://picture.dens.tv/wp/img/tvchannels_v1/340x160/1745228970_tvchannels_v1.jpg',
-    url: 'https://op-flashcon-digdayahd-1.dens.tv/h/h123/live.m3u8?app_type=web&userid=lite&chname=Live_Streaming_1',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran spesial & event langsung dari Dens.TV'
-  },
-  {
-    id: 'bein-sports-xtra',
-    name: 'beIN SPORTS XTRA',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://i.ibb.co/HT49GPmB/XTRA-2.png',
-    url: 'https://bein-xtra-bein.amagi.tv/playlist.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Official beIN Sports • Live Football, Motorsport & Sports'
-  },
-  {
-    id: 'bein-sports-xtra-es',
-    name: 'beIN SPORTS XTRA Español',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/V562tpO.png',
-    url: 'https://dc1644a9jazgj.cloudfront.net/beIN_Sports_Xtra_Espanol.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'beIN Sports • Fútbol En Vivo & Deportes'
-  },
-  {
-    id: 'cbs-golazo',
-    name: 'CBS Sports Golazo Network',
-    category: 'Sports',
-    quality: '720p',
-    logo: 'https://i.imgur.com/eMjutHS.png',
-    url: 'https://jmp2.uk/plu-63a0e33a45264d000850ed7e.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'UEFA Champions League, Serie A & 24/7 Football News'
-  },
-  {
-    id: 'fubo-sports',
-    name: 'Fubo Sports Network',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/qFNRJLb.png',
-    url: 'http://107.167.16.138/fubosportsnetwork/index.m3u8?token=test',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h71/wedo_sport.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Live Sports, Matches & Combat Highlights'
-  },
-  {
-    id: 'fightbox-hd',
-    name: 'FightBox HD',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/mRsnztA.png',
-    url: 'https://nosignal1.antenaplay.ro/hls/fightbox-hd/index.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'MMA, Kickboxing, Boxing & Martial Arts Live'
-  },
-  {
-    id: 'glory-kickboxing',
-    name: 'Glory Kickboxing',
-    category: 'Sports',
-    quality: '720p',
-    logo: 'https://i.imgur.com/tS7Ub7i.png',
-    url: 'https://6f972d29.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0dsb3J5S2lja2JveGluZ19ITFM/playlist.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Championship Kickboxing Live & On-Demand'
-  },
-  {
-    id: 'redbull-tv',
-    name: 'Red Bull TV',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://images.pluto.tv/channels/5e7cb84a172a0f0007da69e4/colorLogoPNG.png',
-    url: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Action Sports, F1 Racing, Moto & Extreme Sports'
-  },
-  {
-    id: 'floracing',
-    name: 'FloRacing',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://images.fubo.tv/channel-config-ui/station-logos/on-dark/floracing-white.png',
-    url: 'https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Live Motorsports, Dirt Track, Sprint & Drag Racing'
-  },
-  {
-    id: 'tennis-channel',
-    name: 'Tennis Channel',
-    category: 'Sports',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/tsljAnY.png',
-    url: 'https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg01444-tennischannelth-tennischannelnl-samsungnl/playlist.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Live Tennis, Grand Slam & ATP/WTA Tours'
-  },
-  {
-    id: 'rock-action',
-    name: 'ROCK Action HD',
-    category: 'Entertainment',
-    quality: 'HD',
-    logo: 'https://www.dens.tv/images/channel-logo/44.jpg',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/index.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/01.m3u8',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Channel Film Action & Hollywood'
-  },
-  {
-    id: 'mbc-drama-kr',
-    name: 'MBC Korea (Drakor FHD)',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/MBCNET_%EB%A1%9C%EA%B3%A0.svg/512px-MBCNET_%EB%A1%9C%EA%B3%A0.svg.png',
-    url: 'https://cdn-us-east-prod-ingest-infra-dacast-com.akamaized.net/624ff8f9-db18-da92-4d42-896fa2ff3eb3/source/index.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Serial Drama Korea (Drakor) • 100% Bahasa Korea Asli (MBC National)'
-  },
-  {
-    id: 'mango-tv',
-    name: 'Mango TV Drama (芒果电视剧)',
-    category: 'Drama',
-    quality: 'HD',
-    logo: 'https://parco-zh.github.io/demo/HNWS.png',
-    url: 'https://liveapi.mgtv.com/',
-    mgtvId: 484,
-    directLocal: true,
-    subtitle: 'Siaran Resmi Mango TV Drama 24 Jam • Serial Dracin Romantis & Hits'
-  },
-  {
-    id: 'mango-tv-intl',
-    name: 'Mango TV Intl (湖南国际 / 芒果TV)',
-    category: 'Drama',
-    quality: 'HD',
-    logo: 'https://parco-zh.github.io/demo/HNWS.png',
-    url: 'https://liveapi.mgtv.com/',
-    mgtvId: 229,
-    directLocal: true,
-    subtitle: 'Siaran Resmi Mango TV / Hunan TV • Variety Show & Drama Populer'
-  },
-  {
-    id: 'cctv8-dracin',
-    name: 'CCTV-8 (Dracin FHD)',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/GyHaZ8X.png',
-    url: 'http://74.91.26.218:82/live/cctv8hd.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Saluran Resmi Serial Drama Tiongkok (Dracin) 24 Jam • Mandarin Asli'
-  },
-  {
-    id: 'cctv-storm-dracin',
-    name: 'CCTV Storm (Dracin Wuxia & Action)',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/rEttkKm.png',
-    url: 'http://38.75.136.137:98/gslb/dsdqpub/fyjc.m3u8?auth=testpub',
-    ref: '',
-    ua: '',
-    subtitle: 'Serial Drama Silat Wuxia, Kungfu & Aksi Kerajaan Tiongkok'
-  },
-  {
-    id: 'cctv6-movie',
-    name: 'CCTV-6 Movie (Sinema & Drama Asia)',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/rFiaef7.png',
-    url: 'http://74.91.26.218:82/live/cctv6hd.m3u8',
-    backupUrl: 'http://38.75.136.137:98/gslb/dsdqpub/dyjc.m3u8?auth=testpub',
-    ref: '',
-    ua: '',
-    subtitle: 'Sinema Film Box Office & Drama Mandarin Pilihan'
-  },
-  {
-    id: 'celestial-movies',
-    name: 'Celestial Movies HD (Dracin & Asia)',
-    category: 'Drama',
-    quality: 'HD',
-    logo: 'https://www.dens.tv/images/channel-logo/99.jpg',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
-    ref: 'https://www.dens.tv/',
-    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Drama Mandarin, Dracin, & Sinema Box Office Asia'
-  },
-  {
-    id: 'max-anime-hd',
-    name: 'MAX Anime HD (Audio Jepang Asli)',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/Oj3hEBh.jpg',
-    url: 'https://jmp2.uk/plu-67ed8f7e443f0671bc2b2368.m3u8',
-    backupUrl: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Anime 24 Jam Nonstop • Audio Jepang Asli & SubTitle (No Dub Spanyol)'
-  },
-  {
-    id: 'anime-hidive',
-    name: 'Anime x HIDIVE',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/v0BlxCa.png',
-    url: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Anime Populer, Isekai, Pertarungan Fantasi & Sci-Fi'
-  },
-  {
-    id: 'pluto-tv-anime',
-    name: 'Pluto TV Anime',
-    category: 'Drama',
-    quality: '1080p',
-    logo: 'https://images.pluto.tv/channels/5f12136385bccc00070142ed/colorLogoPNG_1777595293242.png',
-    url: 'https://jmp2.uk/plu-5812b7d3249444e05d09cc49.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Koleksi Serial Anime Klasik & Modern Terfavorit'
-  },
-  {
-    id: 'zee-bangla-drama',
-    name: 'Zee Bangla HD (Bollywood Drama)',
-    category: 'Drama',
-    quality: '720p',
-    logo: 'https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_ZEE_BANGLA/images/LOGO_HD/LOGO_HD_image.png',
-    url: 'https://raw.githubusercontent.com/amazeyourself/adaptive-streams/refs/heads/main/streams/in/YuppTV/ZeeBanglaHD.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Drama India, Bollywood Romance, Musikal & Cerita Keluarga'
-  },
-  {
-    id: 'daai-tv',
-    name: 'DAAI TV Indonesia',
-    category: 'Entertainment',
-    quality: 'HD',
-    logo: 'https://i.imgur.com/YC7JCHo.png',
-    url: 'https://pull.daaiplus.com/live-DAAIPLUS/live-DAAIPLUS_HD.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Televisi Cinta Kasih & Dokumenter Keluarga'
-  },
-  {
-    id: 'ajwa-tv',
-    name: 'Ajwa TV FHD',
-    category: 'Religious',
-    quality: '1080p',
-    logo: 'https://i.imgur.com/JXjbUhB.png',
-    url: '/api/vidio?id=7464-ajwa-tv',
-    subtitle: 'Cermin Indahnya Islam • Siaran Religi'
-  },
-  {
-    id: 'rodja-tv',
-    name: 'Rodja TV',
-    category: 'Religious',
-    quality: '720p',
-    logo: 'https://i.imgur.com/XwCeHlC.png',
-    url: 'https://rodjatv.com/rodjatv/live.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Menebar Cahaya Sunnah • Kajian Islam'
+    subtitle: 'Siaran Daerah DKI Jakarta'
   },
   {
     id: 'tvri-jabar',
@@ -811,7 +986,7 @@ async function refreshLiveEvents() {
     if (eventTab) {
       if (liveEvents.length > 0) {
         eventTab.style.display = 'inline-flex';
-        eventTab.innerHTML = `🔴 Event (${liveEvents.length})`;
+        eventTab.textContent = `Event (${liveEvents.length})`;
       } else {
         eventTab.style.display = 'none';
         if (activeCategory === 'Event' || activeCategory === 'Events') {
@@ -1412,13 +1587,15 @@ function selectCategory(cat) {
 
   const titles = {
     All: 'Semua Channel',
-    Favorites: '⭐ Channel Favorit',
-    Nasional: '📺 TV Nasional',
-    News: '📰 Berita 24 Jam',
-    Sports: '⚽ Live Sports',
-    Entertainment: '🎬 Hiburan & Film',
-    Daerah: '🏛️ TV Daerah',
-    Religious: '🕌 Siaran Religi'
+    Event: 'Live Event',
+    Favorites: 'Favorit',
+    Indonesia: 'TV Indonesia',
+    China: 'TV China',
+    Korea: 'TV Korea',
+    Jepang: 'TV Jepang',
+    Sports: 'Live Sport',
+    News: 'Berita',
+    Daerah: 'TV Daerah'
   };
   const dirTitle = document.getElementById('directoryTitle');
   if (dirTitle) dirTitle.textContent = titles[cat] || 'Daftar Channel';
@@ -1553,9 +1730,9 @@ function bindEvents() {
   const drawerLoadFullBtn = document.getElementById('drawerLoadFullBtn');
   if (drawerLoadFullBtn) {
     drawerLoadFullBtn.addEventListener('click', async () => {
-      drawerLoadFullBtn.textContent = '⏳ Memuat 120+ Channel...';
+      drawerLoadFullBtn.textContent = 'Memuat 120+ Channel...';
       await importFromUrl('/api/id.m3u');
-      drawerLoadFullBtn.textContent = '✅ 120+ Channel Daerah Aktif';
+      drawerLoadFullBtn.textContent = '120+ Channel Daerah Aktif';
       setTimeout(() => drawerBackdrop.classList.add('hidden'), 400);
     });
   }
@@ -1573,7 +1750,7 @@ function bindEvents() {
     drawerProxyBtn.addEventListener('click', () => {
       proxyToggleBtn.click();
       document.getElementById('drawerProxyLabel').textContent =
-        `🛡️ Smart Proxy: ${useSmartProxy ? 'AKTIF (ON)' : 'MATI (OFF)'}`;
+        `Smart Proxy: ${useSmartProxy ? 'ON' : 'OFF'}`;
     });
   }
 

@@ -230,15 +230,15 @@
           <!-- Category Filter Tabs -->
           <div class="category-tabs" id="categoryTabs">
             <button class="cat-tab active" data-cat="All">Semua</button>
-            <button class="cat-tab event-cat-tab" data-cat="Event" id="eventCatTab" style="display: none;">🔴 Event</button>
-            <button class="cat-tab" data-cat="Favorites">⭐ Favorit</button>
-            <button class="cat-tab" data-cat="Drama">🎭 Drama & Anime</button>
-            <button class="cat-tab" data-cat="Nasional">📺 Nasional</button>
-            <button class="cat-tab" data-cat="News">📰 Berita</button>
-            <button class="cat-tab" data-cat="Sports">⚽ Sport</button>
-            <button class="cat-tab" data-cat="Entertainment">🎬 Hiburan</button>
-            <button class="cat-tab" data-cat="Daerah">🏛️ Daerah</button>
-            <button class="cat-tab" data-cat="Religious">🕌 Religi</button>
+            <button class="cat-tab event-cat-tab" data-cat="Event" id="eventCatTab" style="display: none;">Event</button>
+            <button class="cat-tab" data-cat="Favorites">Favorit</button>
+            <button class="cat-tab" data-cat="Indonesia">Indonesia</button>
+            <button class="cat-tab" data-cat="China">China</button>
+            <button class="cat-tab" data-cat="Korea">Korea</button>
+            <button class="cat-tab" data-cat="Jepang">Jepang</button>
+            <button class="cat-tab" data-cat="Sports">Sport</button>
+            <button class="cat-tab" data-cat="News">Berita</button>
+            <button class="cat-tab" data-cat="Daerah">Daerah</button>
           </div>
         </div>
 
@@ -269,51 +269,55 @@
           </div>
 
           <div class="drawer-section">
-            <div class="drawer-label">Kategori Siaran</div>
+            <div class="drawer-label">Kategori & Region</div>
             <button class="drawer-item active" data-drawer-cat="All">
-              <span>📺 Semua Channel</span>
-              <span class="drawer-badge">Utama</span>
+              <span>Semua Channel</span>
+              <span class="drawer-badge">All</span>
             </button>
-            <button class="drawer-item" data-drawer-cat="Nasional">
-              <span>🇮🇩 TV Nasional FHD</span>
-              <span class="drawer-badge">1080p</span>
+            <button class="drawer-item" data-drawer-cat="Indonesia">
+              <span>Indonesia</span>
+              <span class="drawer-badge">ID</span>
             </button>
-            <button class="drawer-item" data-drawer-cat="Drama">
-              <span>🎭 Drakor, Dracin & Anime</span>
-              <span class="drawer-badge">HOT</span>
+            <button class="drawer-item" data-drawer-cat="China">
+              <span>China</span>
+              <span class="drawer-badge">CN</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Korea">
+              <span>Korea</span>
+              <span class="drawer-badge">KR</span>
+            </button>
+            <button class="drawer-item" data-drawer-cat="Jepang">
+              <span>Jepang</span>
+              <span class="drawer-badge">JP</span>
             </button>
             <button class="drawer-item" data-drawer-cat="Sports">
-              <span>⚽ Olahraga & Live Sport</span>
+              <span>Sport</span>
               <span class="drawer-badge">Live</span>
             </button>
             <button class="drawer-item" data-drawer-cat="News">
-              <span>📰 Berita 24 Jam</span>
-              <span class="drawer-badge">News</span>
-            </button>
-            <button class="drawer-item" data-drawer-cat="Entertainment">
-              <span>🎬 Hiburan, Film & Kartun</span>
-              <span class="drawer-badge">Movies</span>
+              <span>Berita</span>
+              <span class="drawer-badge">24h</span>
             </button>
             <button class="drawer-item" data-drawer-cat="Daerah">
-              <span>🏛️ TV Daerah & Lokal</span>
+              <span>Daerah</span>
               <span class="drawer-badge">Lokal</span>
             </button>
             <button class="drawer-item" data-drawer-cat="Favorites">
-              <span>⭐ Channel Favorit Saya</span>
-              <span class="drawer-badge">Simpanan</span>
+              <span>Favorit</span>
+              <span class="drawer-badge">Tersimpan</span>
             </button>
           </div>
 
           <div class="drawer-section">
-            <div class="drawer-label">Pengaturan & Ekstra</div>
+            <div class="drawer-label">Pengaturan & Playlist</div>
             <button id="drawerLoadFullBtn" class="drawer-action-btn">
-              <span>📥 Muat 120+ Channel TV Daerah</span>
+              <span>Muat 120+ Channel Daerah</span>
             </button>
             <button id="drawerOpenM3uBtn" class="drawer-action-btn">
-              <span>➕ Tambah / Import Playlist M3U</span>
+              <span>Import Playlist M3U</span>
             </button>
             <button id="drawerProxyBtn" class="drawer-action-btn">
-              <span id="drawerProxyLabel">🛡️ Smart Proxy: AKTIF (ON)</span>
+              <span id="drawerProxyLabel">Smart Proxy: ON</span>
             </button>
           </div>
         </div>
@@ -330,7 +334,7 @@
       </div>
     </div>
 
-    <!-- MATERIAL DESIGN 3 BOTTOM NAVIGATION BAR KHUSUS HP (Persis Capstone BottomNav.tsx) -->
+    <!-- MATERIAL DESIGN 3 BOTTOM NAVIGATION BAR KHUSUS HP -->
     <nav class="m3-bottom-nav" aria-label="Navigasi Bawah HP">
       <button class="m3-nav-item active" data-bnav="All">
         <div class="m3-nav-pill">
@@ -339,10 +343,10 @@
             <polyline points="17 2 12 7 7 2" />
           </svg>
         </div>
-        <span class="m3-nav-label">Semua TV</span>
+        <span class="m3-nav-label">Semua</span>
       </button>
 
-      <button class="m3-nav-item" data-bnav="Nasional">
+      <button class="m3-nav-item" data-bnav="Indonesia">
         <div class="m3-nav-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 2 7 12 12 22 7 12 2" />
@@ -350,7 +354,7 @@
             <polyline points="2 12 12 17 22 12" />
           </svg>
         </div>
-        <span class="m3-nav-label">Nasional</span>
+        <span class="m3-nav-label">Indonesia</span>
       </button>
 
       <button class="m3-nav-item" data-bnav="Favorites">
@@ -400,10 +404,11 @@
           <div class="preset-box">
             <span class="preset-label">Preset Playlist Publik:</span>
             <div class="preset-buttons">
-              <button class="preset-btn" data-url="/api/id.m3u">🇮🇩 Full TV Indonesia (120+ Ch)</button>
-              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/sports.m3u">⚽ World Sports FTA</button>
-              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/movies.m3u">🎬 World Movies FTA</button>
-              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/news.m3u">🌍 World News FTA</button>
+              <button class="preset-btn" data-url="/api/id.m3u">TV Indonesia (120+ Ch)</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/countries/cn.m3u">TV China</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/countries/kr.m3u">TV Korea</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/countries/jp.m3u">TV Jepang</button>
+              <button class="preset-btn" data-url="https://iptv-org.github.io/iptv/categories/sports.m3u">World Sports</button>
             </div>
           </div>
 
@@ -430,11 +435,13 @@
             <div>
               <label class="form-label">Kategori</label>
               <select id="customCatInput">
-                <option value="Nasional">Nasional</option>
-                <option value="Sports">Sports</option>
-                <option value="Entertainment">Hiburan / Movies</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="China">China</option>
+                <option value="Korea">Korea</option>
+                <option value="Jepang">Jepang</option>
+                <option value="Sports">Sport</option>
                 <option value="News">Berita</option>
-                <option value="Daerah">TV Daerah</option>
+                <option value="Daerah">Daerah</option>
               </select>
             </div>
           </div>
