@@ -119,12 +119,11 @@ const DEFAULT_CHANNELS = [
     category: 'Nasional',
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
-    url: '/api/vidio?id=782-antv',
-    embedUrl: 'https://www.vidio.com/live/782-antv/embed?autoplay=true&player_only=true&mute=false',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi ANTV • Mega Bollywood • Sinema Laga & Horor'
+    subtitle: 'Siaran Resmi ANTV / Viva Group • Mega Bollywood • Sinema & Hiburan'
   },
   {
     id: 'mentari-tv',
@@ -132,12 +131,11 @@ const DEFAULT_CHANNELS = [
     category: 'Entertainment',
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
-    url: '/api/vidio?id=8237-mentari-tv',
-    embedUrl: 'https://www.vidio.com/live/8237-mentari-tv/embed?autoplay=true&player_only=true&mute=false',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h17/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
+    subtitle: 'Siaran Resmi Mentari / Kids TV • Kartun Anak & Keluarga'
   },
   {
     id: 'kompas-tv-hd',
@@ -1146,11 +1144,6 @@ async function playChannel(channel) {
             if (channel.directLocal && !channel._forceProxy && !channel.mgtvId) {
               channel._forceProxy = true;
               playChannel(channel);
-              return;
-            }
-            if (channel.embedUrl && !channel._usedEmbed) {
-              channel._usedEmbed = true;
-              mountEmbedIframe(channel.embedUrl);
               return;
             }
             if (channel.backupUrl && channel.url !== channel.backupUrl) {

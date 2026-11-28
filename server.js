@@ -241,12 +241,18 @@ async function resolveVidioHlsFromMikrofast(id) {
     Origin: 'https://www.vidio.com'
   });
   const mpdText = (await readStreamBuffer(mpdRes, mpdRes.headers['content-encoding'])).toString('utf8');
+  if (mpdText.includes('ContentProtection')) {
+    throw new Error(`Channel ${id} is DRM protected`);
+  }
   const baseMatch = mpdText.match(/<BaseURL>([^<]+)<\/BaseURL>/);
   const hdntlMatch = mpdText.match(/\?(hdntl=[^"&]+)/);
   if (!baseMatch || !hdntlMatch) {
     throw new Error(`Mikrofast MPD token not found for channel ${id}`);
   }
   const baseUrl = baseMatch[1].trim();
+  if (baseUrl.includes('/drm/') || (process.env.VERCEL && baseUrl.includes('geo-id-'))) {
+    throw new Error(`Channel ${id} is geo-restricted or DRM protected on Vercel`);
+  }
   const hdntl = hdntlMatch[1].replace(/&amp;/g, '&');
   const has1080 = mpdText.includes('avc-1080p');
   const syntheticMaster = [
@@ -331,14 +337,21 @@ async function resolveVidioHlsUrl(slug, attempt = 0, clientIp = '') {
     );
     const streamText = (await readStreamBuffer(apiRes, apiRes.headers['content-encoding'])).toString('utf8');
     const streamJson = JSON.parse(streamText);
-    const hlsUrl = streamJson?.data?.attributes?.hls;
-    if (!hlsUrl) {
+    const attrs = streamJson?.data?.attributes || {};
+    const hlsUrl = attrs.hls;
+    if (attrs.is_drm || (hlsUrl && hlsUrl.includes('/drm/'))) {
+      throw new Error(`Stream ${slug} is DRM protected (PPV)`);
+    }
+    if (!hlsUrl || (process.env.VERCEL && hlsUrl.includes('geo-id-'))) {
       // Fallback to Indonesian token relay (Mikrofast MPD -> Shaka HLS conversion) when running on Singapore Vercel
       const { syntheticMaster, baseUrl } = await resolveVidioHlsFromMikrofast(id);
       return { hlsUrl: null, syntheticMaster, baseUrl };
     }
     return { hlsUrl, syntheticMaster: null, baseUrl: null };
   } catch (err) {
+    if (/DRM protected/i.test(err.message)) {
+      throw err;
+    }
     if (attempt < 1 && /ECONNRESET|timeout|ETIMEDOUT/i.test(err.message)) {
       cachedVidioApiKey = null;
       return resolveVidioHlsUrl(slug, attempt + 1, clientIp);
@@ -357,8 +370,8 @@ const KNOWN_CHANNEL_IDS = new Set([
   '205','204','733','665','734','783','782','870','206','777','778','874','5409','1561','6441','8237',
   '18280','875','6410','5415','6165','18162','19046','7464','7052','6397','7968'
 ]);
-// Paywalled Vidio sports channels: never touched (no login/paywall bypass)
-const PREMIUM_SPORT_RE = /champions-tv|premier-league-tv|champions-fight|spotv|bein|-tv-\d+$/i;
+// Paywalled Vidio sports/PPV channels: never touched (no login/paywall bypass)
+const PREMIUM_SPORT_RE = /champions-tv|premier-league-tv|champions-fight|spotv|bein|hss-series|byon-combat|-tv-\d+$/i;
 const LINEAR_EXCLUDE_RE = /nhk|dw-|cgtn|aljazeera|euronews|berita|news|tvri|rcti|sctv|indosiar|antv|mnctv|gtv|inews|trans|kompas|metro|rtv|jaktv|mdtv|sinpo/i;
 const EVENT_RE = /(grand-prix|championship|cup|league|liga|final|series|open|masters|vs\b|world-cup|world-tour|superliga|piala|badminton|basket|voli|proliga|motogp|f1\b|formula|olympic|timnas|aff|sea-games|asian-games|match)/i;
 let eventsCache = { at: 0, data: [] };
