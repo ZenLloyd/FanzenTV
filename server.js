@@ -1,10 +1,38 @@
 const http = require('http');
 const https = require('https');
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const crypto = require('crypto');
 const { URL } = require('url');
+
+const dnsCache = new Map();
+function ipv4Lookup(hostname, options, cb) {
+  if (typeof options === 'function') {
+    cb = options;
+    options = {};
+  }
+  const wantAll = options && options.all;
+  const reply = (ip) => (wantAll ? cb(null, [{ address: ip, family: 4 }]) : cb(null, ip, 4));
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(hostname)) return reply(hostname);
+  const cached = dnsCache.get(hostname);
+  if (cached && Date.now() < cached.exp) return reply(cached.ip);
+  dns.resolve4(hostname, (err, addresses) => {
+    if (!err && addresses && addresses.length) {
+      dnsCache.set(hostname, { ip: addresses[0], exp: Date.now() + 300000 });
+      return reply(addresses[0]);
+    }
+    dns.lookup(hostname, { family: 4 }, (e2, addr) => {
+      if (e2) return dns.lookup(hostname, options, cb);
+      dnsCache.set(hostname, { ip: addr, exp: Date.now() + 300000 });
+      reply(addr);
+    });
+  });
+}
 
 const PORT = process.env.PORT || 3080;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -47,6 +75,11 @@ function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 
         headers['Origin'] = new URL(customHeaders['Referer']).origin;
       } catch (_) {}
     }
+    if (clientIp) {
+      headers['X-Forwarded-For'] = clientIp;
+      headers['True-Client-IP'] = clientIp;
+      headers['X-Real-IP'] = clientIp;
+    }
 
     const options = {
       protocol: parsed.protocol,
@@ -55,6 +88,8 @@ function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 
       path: parsed.pathname + parsed.search,
       method,
       headers,
+      family: 4,
+      lookup: ipv4Lookup,
       timeout: 12000,
       rejectUnauthorized: false
     };
@@ -234,15 +269,39 @@ async function resolveVidioHlsFromMikrofast(id) {
   return { syntheticMaster, baseUrl };
 }
 
-async function resolveVidioHlsUrl(slug, attempt = 0) {
+function cleanVidioMasterM3u8(rawText) {
+  if (!rawText || !rawText.includes('#EXTM3U')) return rawText;
+  let text = rawText.replace(/(#EXT-X-MEDIA:TYPE=AUDIO[^\n]*?)DEFAULT=NO/g, '$1DEFAULT=YES');
+  if (text.includes('avc1.') && text.includes('av01.')) {
+    const lines = text.split(/\r?\n/);
+    const filtered = [];
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('#EXT-X-STREAM-INF') && lines[i].includes('CODECS="av01.')) {
+        i++; // skip the av01 stream URL line as well
+        continue;
+      }
+      filtered.push(lines[i]);
+    }
+    text = filtered.join('\n');
+  }
+  return text;
+}
+
+async function resolveVidioHlsUrl(slug, attempt = 0, clientIp = '') {
   try {
     const id = parseInt(slug, 10);
     const { encryptedKey, cookieHeader } = await getVidioAuthSession();
 
-    const { res: embedRes } = await fetchRemote(`https://www.vidio.com/live/${slug}/embed`, {
-      Referer: 'https://www.vidio.com/',
-      Cookie: cookieHeader
-    });
+    const { res: embedRes } = await fetchRemote(
+      `https://www.vidio.com/live/${slug}/embed`,
+      {
+        Referer: 'https://www.vidio.com/',
+        Cookie: cookieHeader
+      },
+      0,
+      'GET',
+      clientIp
+    );
     const embedHtml = (await readStreamBuffer(embedRes, embedRes.headers['content-encoding'])).toString('utf8');
     const sigMatch = embedHtml.match(
       /\\"streamSignature\\":\{\\"clientId\\":\\"([^"\\]+)\\",\\"signature\\":\\"([^"\\]+)\\"\}/
@@ -253,42 +312,25 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
     }
     const [, clientId, signature] = sigMatch;
 
-    const { res: streamRes } = await fetchRemote(
-      `https://www.vidio.com/api/livestreamings/${id}/stream?initialize=true`,
+    const { res: apiRes } = await fetchRemote(
+      `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
       {
         Origin: 'https://www.vidio.com',
         Referer: `https://www.vidio.com/live/${slug}/embed`,
         Cookie: cookieHeader,
         'X-Api-Key': encryptedKey,
         'X-Secure-Level': '2',
-        'X-API-Platform': 'embed-web',
+        'X-API-Platform': 'web-desktop',
         'X-Signature': signature,
         'X-Client': clientId,
         'X-Requested-With': 'vidio-next'
-      }
+      },
+      0,
+      'GET',
+      clientIp
     );
-    let streamText = (await readStreamBuffer(streamRes, streamRes.headers['content-encoding'])).toString('utf8');
-    let streamJson;
-    try {
-      streamJson = JSON.parse(streamText);
-    } catch (_) {
-      const { res: apiRes } = await fetchRemote(
-        `https://api.vidio.com/livestreamings/${id}/stream?initialize=true`,
-        {
-          Origin: 'https://www.vidio.com',
-          Referer: `https://www.vidio.com/live/${slug}/embed`,
-          Cookie: cookieHeader,
-          'X-Api-Key': encryptedKey,
-          'X-Secure-Level': '2',
-          'X-API-Platform': 'web-desktop',
-          'X-Signature': signature,
-          'X-Client': clientId,
-          'X-Requested-With': 'vidio-next'
-        }
-      );
-      streamText = (await readStreamBuffer(apiRes, apiRes.headers['content-encoding'])).toString('utf8');
-      streamJson = JSON.parse(streamText);
-    }
+    const streamText = (await readStreamBuffer(apiRes, apiRes.headers['content-encoding'])).toString('utf8');
+    const streamJson = JSON.parse(streamText);
     const hlsUrl = streamJson?.data?.attributes?.hls;
     if (!hlsUrl) {
       // Fallback to Indonesian token relay (Mikrofast MPD -> Shaka HLS conversion) when running on Singapore Vercel
@@ -299,7 +341,7 @@ async function resolveVidioHlsUrl(slug, attempt = 0) {
   } catch (err) {
     if (attempt < 1 && /ECONNRESET|timeout|ETIMEDOUT/i.test(err.message)) {
       cachedVidioApiKey = null;
-      return resolveVidioHlsUrl(slug, attempt + 1);
+      return resolveVidioHlsUrl(slug, attempt + 1, clientIp);
     }
     try {
       const id = parseInt(slug, 10);
@@ -513,7 +555,8 @@ const server = http.createServer(async (req, res) => {
     let step = 'init';
     try {
       step = 'resolveVidioHlsUrl';
-      const resolved = await resolveVidioHlsUrl(slug);
+      const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+      const resolved = await resolveVidioHlsUrl(slug, 0, clientIp);
       const ref = 'https://www.vidio.com/';
       const ua =
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
@@ -528,6 +571,11 @@ const server = http.createServer(async (req, res) => {
             'Cache-Control': 'no-cache, no-store, must-revalidate'
           });
           return res.end(JSON.stringify({ synthetic: true, baseUrl: resolved.baseUrl }));
+        }
+        // On Vercel (sin1 Singapore), geo-id-etslive-v3-vidio-com-tokenized.akamaized.net blocks Singapore proxy IPs with 403
+        if (process.env.VERCEL && resolved.baseUrl && resolved.baseUrl.includes('geo-id-')) {
+          res.writeHead(403, { 'Content-Type': 'application/json' });
+          return res.end(JSON.stringify({ error: 'Geo-ID stream requires direct browser embed on Vercel', geoId: true }));
         }
         const mikroUa =
           'Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36';
@@ -547,13 +595,22 @@ const server = http.createServer(async (req, res) => {
         });
         return res.end(JSON.stringify({ hlsUrl }));
       }
+      if (process.env.VERCEL && hlsUrl && hlsUrl.includes('geo-id-')) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: 'Geo-ID stream requires direct browser embed on Vercel', geoId: true }));
+      }
       step = 'fetchHlsManifest';
       const { res: remoteRes, finalUrl } = await fetchRemote(hlsUrl, {
         Referer: ref,
         'User-Agent': ua
       });
+      if ((remoteRes.statusCode || 200) >= 400) {
+        res.writeHead(remoteRes.statusCode, { 'Content-Type': 'application/json' });
+        remoteRes.resume();
+        return res.end(JSON.stringify({ error: `Upstream returned ${remoteRes.statusCode}` }));
+      }
       const rawBuf = await readStreamBuffer(remoteRes, remoteRes.headers['content-encoding']);
-      const rawText = rawBuf.toString('utf8');
+      const rawText = cleanVidioMasterM3u8(rawBuf.toString('utf8'));
       const rewritten = rewriteM3u8(rawText, finalUrl, ua, ref, hostPrefix);
       res.writeHead(200, {
         'Content-Type': 'application/vnd.apple.mpegurl; charset=utf-8',
@@ -561,7 +618,7 @@ const server = http.createServer(async (req, res) => {
       });
       return res.end(rewritten);
     } catch (err) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.writeHead(502, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ error: err.message, step }));
     }
   }

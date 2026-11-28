@@ -120,9 +120,10 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
     url: '/api/vidio?id=782-antv',
-    backupUrl: 'https://dsgtq5sngxkde.cloudfront.net/antv/index.m3u8',
-    ref: 'https://www.visionplus.id/',
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    embedUrl: 'https://www.vidio.com/live/782-antv/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi ANTV • Mega Bollywood • Sinema Laga & Horor'
   },
   {
@@ -132,9 +133,10 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
     url: '/api/vidio?id=8237-mentari-tv',
-    backupUrl: 'https://vidio123.mikrofast.web.id/vidio/8237/index.m3u8',
-    ref: 'https://www.vidio.com/',
-    ua: 'Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36',
+    embedUrl: 'https://www.vidio.com/live/8237-mentari-tv/embed?autoplay=true&player_only=true&mute=false',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Mentari TV • Kartun Anak & Keluarga'
   },
   {
@@ -237,6 +239,8 @@ const DEFAULT_CHANNELS = [
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8',
+    backupUrl: '/api/vidio?id=6441-tvri',
+    directLocal: true,
     ref: '',
     ua: '',
     subtitle: 'Media Pemersatu Bangsa • Siaran Nasional'
@@ -248,6 +252,7 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/TVRI_Sport_2022.svg/512px-TVRI_Sport_2022.svg.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8',
+    directLocal: true,
     ref: '',
     ua: '',
     subtitle: 'BWF Badminton • Olahraga Nasional & Dunia'
@@ -259,8 +264,10 @@ const DEFAULT_CHANNELS = [
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/TVRIWorld.png/512px-TVRIWorld.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/TVRIWorld/hls/TVRIWorld.m3u8',
-    ref: '',
-    ua: '',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h249/index.m3u8?app_type=web&userid=jjj&chname=TVRI_World',
+    directLocal: true,
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Indonesian English Broadcast Channel'
   },
   {
@@ -312,10 +319,11 @@ const DEFAULT_CHANNELS = [
     category: 'Entertainment',
     quality: 'HD',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/VTV_Indonesia_red.png',
-    url: 'https://flv.intechmedia.net/live/ch107.m3u8',
-    ref: '',
-    ua: '',
-    subtitle: 'Siaran Resmi VTV • Kartun Anak, Masha & Hiburan Keluarga'
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h16/01.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    ref: 'https://www.dens.tv/',
+    ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
+    subtitle: 'Siaran Resmi VTV / Family • Kartun Anak, Masha & Hiburan Keluarga'
   },
   {
     id: 'dens-live-event',
@@ -356,7 +364,7 @@ const DEFAULT_CHANNELS = [
     category: 'Sports',
     quality: '720p',
     logo: 'https://i.imgur.com/eMjutHS.png',
-    url: 'https://dai.google.com/linear/hls/event/7f3Wv6f7QEKfQna22jHqLQ/master.m3u8',
+    url: 'https://jmp2.uk/plu-63a0e33a45264d000850ed7e.m3u8',
     ref: '',
     ua: '',
     subtitle: 'UEFA Champions League, Serie A & 24/7 Football News'
@@ -367,7 +375,8 @@ const DEFAULT_CHANNELS = [
     category: 'Sports',
     quality: '1080p',
     logo: 'https://i.imgur.com/qFNRJLb.png',
-    url: 'https://dnf08l6u6uxnz.cloudfront.net/master.m3u8',
+    url: 'http://107.167.16.138/fubosportsnetwork/index.m3u8?token=test',
+    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h71/wedo_sport.m3u8',
     ref: '',
     ua: '',
     subtitle: 'Live Sports, Matches & Combat Highlights'
@@ -499,7 +508,8 @@ const DEFAULT_CHANNELS = [
     category: 'Drama',
     quality: '1080p',
     logo: 'https://i.imgur.com/rFiaef7.png',
-    url: 'http://69.30.245.50/live/cctv6.m3u8',
+    url: 'http://74.91.26.218:82/live/cctv6hd.m3u8',
+    backupUrl: 'http://38.75.136.137:98/gslb/dsdqpub/dyjc.m3u8?auth=testpub',
     ref: '',
     ua: '',
     subtitle: 'Sinema Film Box Office & Drama Mandarin Pilihan'
@@ -517,14 +527,15 @@ const DEFAULT_CHANNELS = [
   },
   {
     id: 'max-anime-hd',
-    name: 'MAX Anime HD (Anime & Drajap)',
+    name: 'MAX Anime HD (Audio Jepang Asli)',
     category: 'Drama',
     quality: '1080p',
     logo: 'https://i.imgur.com/Oj3hEBh.jpg',
-    url: 'https://cdnlive.klicgo.net/maxanime/live/playlist.m3u8',
+    url: 'https://jmp2.uk/plu-67ed8f7e443f0671bc2b2368.m3u8',
+    backupUrl: 'https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8',
     ref: '',
     ua: '',
-    subtitle: 'Anime 24 Jam Nonstop • Serial Kartun & Cerita Petualangan Jepang'
+    subtitle: 'Anime 24 Jam Nonstop • Audio Jepang Asli & SubTitle (No Dub Spanyol)'
   },
   {
     id: 'anime-hidive',
@@ -597,6 +608,7 @@ const DEFAULT_CHANNELS = [
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/Jabar/hls/Jabar.m3u8',
+    directLocal: true,
     ref: '',
     ua: '',
     subtitle: 'Siaran Daerah Jawa Barat & Bandung'
@@ -608,6 +620,7 @@ const DEFAULT_CHANNELS = [
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/Jatim/hls/Jatim.m3u8',
+    directLocal: true,
     ref: '',
     ua: '',
     subtitle: 'Siaran Daerah Jawa Timur & Surabaya'
@@ -619,6 +632,7 @@ const DEFAULT_CHANNELS = [
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/TVRILogo2019.svg/512px-TVRILogo2019.svg.png',
     url: 'https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8',
+    directLocal: true,
     ref: '',
     ua: '',
     subtitle: 'Siaran Daerah Istimewa Yogyakarta'
@@ -905,7 +919,7 @@ function renderChannelList() {
 }
 
 function buildStreamUrl(channel) {
-  if (channel.directLocal || channel.url.startsWith('/api/')) {
+  if ((channel.directLocal && !channel._forceProxy) || channel.url.startsWith('/api/')) {
     return channel.url;
   }
   if (!useSmartProxy) {
@@ -1129,8 +1143,20 @@ async function playChannel(channel) {
       if (data.fatal) {
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
+            if (channel.directLocal && !channel._forceProxy && !channel.mgtvId) {
+              channel._forceProxy = true;
+              playChannel(channel);
+              return;
+            }
+            if (channel.embedUrl && !channel._usedEmbed) {
+              channel._usedEmbed = true;
+              mountEmbedIframe(channel.embedUrl);
+              return;
+            }
             if (channel.backupUrl && channel.url !== channel.backupUrl) {
               channel.url = channel.backupUrl;
+              channel.directLocal = false;
+              channel._forceProxy = false;
               playChannel(channel);
               return;
             }
