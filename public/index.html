@@ -18,6 +18,20 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
 </head>
 <body>
+  <!-- Hardware-Accelerated SVG Convolution Filters for 1080p / 2K QHD / 4K UHD Super-Resolution Upscaling -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none;opacity:0;" aria-hidden="true">
+    <defs>
+      <filter id="fhdUpscaleFilter" color-interpolation-filters="sRGB">
+        <feConvolveMatrix order="3" kernelMatrix="0 -0.18 0 -0.18 1.72 -0.18 0 -0.18 0" preserveAlpha="true" />
+      </filter>
+      <filter id="qhd2kFilter" color-interpolation-filters="sRGB">
+        <feConvolveMatrix order="3" kernelMatrix="0 -0.28 0 -0.28 2.12 -0.28 0 -0.28 0" preserveAlpha="true" />
+      </filter>
+      <filter id="uhd4kFilter" color-interpolation-filters="sRGB">
+        <feConvolveMatrix order="3" kernelMatrix="-0.08 -0.35 -0.08 -0.35 2.72 -0.35 -0.08 -0.35 -0.08" preserveAlpha="true" />
+      </filter>
+    </defs>
+  </svg>
   <div class="app-shell">
     <!-- Top Header Bar (Clean M3 App Bar on Mobile, Full Toolbar on Desktop) -->
     <header class="topbar">

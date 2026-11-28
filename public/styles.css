@@ -1378,3 +1378,21 @@ video.aspect-stretch {
   50% { opacity: 0.6; }
 }
 
+/* Real-time Super Resolution Upscaler Shaders (FHD / 2K QHD / 4K UHD) */
+#videoPlayer.upscale-fhd {
+  filter: url(#fhdUpscaleFilter) contrast(1.03) saturate(1.04);
+}
+#videoPlayer.upscale-2k {
+  filter: url(#qhd2kFilter) contrast(1.05) saturate(1.06);
+}
+#videoPlayer.upscale-4k {
+  filter: url(#uhd4kFilter) contrast(1.07) saturate(1.1);
+}
+.quality-tag.q-ultra {
+  background: linear-gradient(135deg, #f59e0b, #ef4444) !important;
+  color: #fff !important;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+}
+
+

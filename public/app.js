@@ -60,22 +60,22 @@ const DEFAULT_CHANNELS = [
     id: 'mdtv-net-hd',
     name: 'MDTV / NET. HD',
     category: 'Nasional',
-    quality: 'HD',
+    quality: '720p50',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/MDTV_logo.svg/512px-MDTV_logo.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h223/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h223/02.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi MDTV / NET. • Drama & Hiburan Keluarga'
+    subtitle: 'Siaran Resmi MDTV / NET. • 720p 50fps Smooth • Drama & Hiburan Keluarga'
   },
   {
     id: 'rtv-hd',
     name: 'RTV (Rajawali TV) HD',
     category: 'Nasional',
-    quality: 'HD',
+    quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/RTV_Indonesia_logo.svg/512px-RTV_Indonesia_logo.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h10/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi RTV • Kartun Anak • Anime & Tokusatsu'
@@ -84,13 +84,13 @@ const DEFAULT_CHANNELS = [
     id: 'moji-hd',
     name: 'MOJI HD',
     category: 'Sports',
-    quality: 'HD',
+    quality: '720p50',
     logo: 'https://i.imgur.com/mM9zapJ.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h207/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h207/02.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
-    subtitle: 'Siaran Resmi MOJI • Voli Proliga • VNL & Olahraga'
+    subtitle: 'Siaran Resmi MOJI • 720p 50fps Smooth • Voli Proliga, VNL & Olahraga'
   },
   {
     id: 'indosiar-hd',
@@ -119,8 +119,8 @@ const DEFAULT_CHANNELS = [
     category: 'Nasional',
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Antv_logo.svg/512px-Antv_logo.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi ANTV / Viva Group • Mega Bollywood • Sinema & Hiburan'
@@ -131,8 +131,8 @@ const DEFAULT_CHANNELS = [
     category: 'Entertainment',
     quality: '1080p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mentari_TV_2022.svg/512px-Mentari_TV_2022.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h17/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h17/index.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Mentari / Kids TV • Kartun Anak & Keluarga'
@@ -141,10 +141,10 @@ const DEFAULT_CHANNELS = [
     id: 'kompas-tv-hd',
     name: 'Kompas TV',
     category: 'News',
-    quality: 'HD',
+    quality: '720p',
     logo: 'https://i.imgur.com/bD6UHeZ.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/s/s104/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/s/s104/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/s/s104/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/s/s104/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Kompas TV • Independen Terpercaya'
@@ -165,10 +165,10 @@ const DEFAULT_CHANNELS = [
     id: 'metrotv-hd',
     name: 'Metro TV HD',
     category: 'News',
-    quality: 'HD',
+    quality: '720p',
     logo: 'https://i.imgur.com/QnU70NI.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h12/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h12/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi Metro TV • Knowledge to Elevate'
@@ -177,10 +177,10 @@ const DEFAULT_CHANNELS = [
     id: 'tvone-hd',
     name: 'tvOne HD',
     category: 'News',
-    quality: 'HD',
+    quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/TvOne_2023.svg/512px-TvOne_2023.svg.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
-    backupUrl: 'https://op-flashcon-digdayahd-1.dens.tv/h/h40/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h40/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi tvOne • Apa Kabar Indonesia'
@@ -203,7 +203,8 @@ const DEFAULT_CHANNELS = [
     category: 'News',
     quality: '720p',
     logo: 'https://i.imgur.com/l0JyOrm.png',
-    url: 'https://video.detik.com/livecnn/smil:cnntv/chunklist_w268557525_b384000_sleng.m3u8',
+    url: 'https://video.detik.com/livecnn/smil:cnntv/playlist.m3u8',
+    backupUrl: 'https://video.detik.com/livecnn/smil:cnntv/chunklist_w268557525_b384000_sleng.m3u8',
     ref: 'https://www.cnnindonesia.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
     subtitle: 'Berita Terkini Nasional & Internasional 24 Jam'
@@ -214,7 +215,8 @@ const DEFAULT_CHANNELS = [
     category: 'News',
     quality: '720p',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/CNBC_Indonesia_2025.svg/512px-CNBC_Indonesia_2025.svg.png',
-    url: 'https://video.detik.com/livecnbc/smil:cnbctv/chunklist_w1279679883_b384000_sleng.m3u8',
+    url: 'https://video.detik.com/livecnbc/smil:cnbctv/playlist.m3u8',
+    backupUrl: 'https://video.detik.com/livecnbc/smil:cnbctv/chunklist_w1279679883_b384000_sleng.m3u8',
     ref: 'https://www.cnbcindonesia.com/',
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
     subtitle: 'Ekonomi, Bisnis, Saham & Market Update'
@@ -317,8 +319,8 @@ const DEFAULT_CHANNELS = [
     category: 'Entertainment',
     quality: 'HD',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/VTV_Indonesia_red.png',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h16/01.m3u8',
-    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h16/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h10/index.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Siaran Resmi VTV / Family • Kartun Anak, Masha & Hiburan Keluarga'
@@ -440,7 +442,8 @@ const DEFAULT_CHANNELS = [
     category: 'Entertainment',
     quality: 'HD',
     logo: 'https://www.dens.tv/images/channel-logo/44.jpg',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h15/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Channel Film Action & Hollywood'
@@ -518,7 +521,8 @@ const DEFAULT_CHANNELS = [
     category: 'Drama',
     quality: 'HD',
     logo: 'https://www.dens.tv/images/channel-logo/99.jpg',
-    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
+    url: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/index.m3u8',
+    backupUrl: 'https://op-group1-densxvisionhd-1.dens.tv/h/h14/01.m3u8',
     ref: 'https://www.dens.tv/',
     ua: 'DENSGO/3.00.00 (Linux;Android 15.0.0;) ExoPlayerLib/2.19.1',
     subtitle: 'Drama Mandarin, Dracin, & Sinema Box Office Asia'
@@ -649,6 +653,7 @@ let hlsInstance = null;
 let aspectModes = ['FIT', 'FILL', '16:9'];
 let currentAspectIndex = 0;
 let userSubtitlePref = localStorage.getItem('bitstream_subtitle_pref') || 'off';
+let userQualityPref = localStorage.getItem('bitstream_quality_pref') || 'auto';
 
 const CASUAL_PHRASES = [
   [/\bwhat are you doing\b/gi, 'lagi ngapain lu'],
@@ -1022,7 +1027,7 @@ async function fetchJsonp(url, timeoutMs = 6000) {
 }
 
 async function resolveMgtvLiveUrl(channelId) {
-  const base = `https://liveapi.mgtv.com/v1/epg/turnplay/getLivePlayUrlMPP?version=PCPlayer&platform=1&buss_id=2000001&definition=std&channel_id=${channelId}`;
+  const base = `https://liveapi.mgtv.com/v1/epg/turnplay/getLivePlayUrlMPP?version=PCPlayer&platform=1&buss_id=2000001&definition=uhd&channel_id=${channelId}`;
   let json = await fetchJsonp(base);
   if (json && json.data && json.data.url && json.data.url.includes('qq') && json.data.npuk) {
     json = await fetchJsonp(`${base}&npuk=${encodeURIComponent(json.data.npuk)}`);
@@ -1031,6 +1036,99 @@ async function resolveMgtvLiveUrl(channelId) {
     return json.data.url.replace(/^http:/, 'https:');
   }
   throw new Error('Mango TV stream not available');
+}
+
+function getBestLevelIndex(levels, targetHeight) {
+  if (!levels || !levels.length) return -1;
+  let bestIdx = 0;
+  let bestDiff = Infinity;
+  let maxBw = -1;
+  levels.forEach((lvl, idx) => {
+    const h = lvl.height || (lvl.bitrate >= 3500000 ? 1080 : lvl.bitrate >= 1800000 ? 720 : lvl.bitrate >= 900000 ? 480 : 360);
+    const diff = Math.abs(h - targetHeight);
+    if (diff < bestDiff || (diff === bestDiff && (lvl.bitrate || 0) > maxBw)) {
+      bestDiff = diff;
+      bestIdx = idx;
+      maxBw = lvl.bitrate || 0;
+    }
+  });
+  return bestIdx;
+}
+
+function populateQualityDropdown(levels = []) {
+  const presets = [
+    { value: 'auto', label: 'Auto (Max HD)' },
+    { value: '2160p', label: '2160p (4K UHD)' },
+    { value: '1440p', label: '1440p (2K QHD)' },
+    { value: '1080p', label: '1080p (FHD)' },
+    { value: '720p', label: '720p (HD)' },
+    { value: '480p', label: '480p' },
+    { value: '360p', label: '360p' }
+  ];
+  qualitySelect.innerHTML = '';
+  presets.forEach((p) => {
+    const opt = document.createElement('option');
+    opt.value = p.value;
+    opt.textContent = p.label;
+    qualitySelect.appendChild(opt);
+  });
+  const exists = presets.some((p) => p.value === userQualityPref);
+  qualitySelect.value = exists ? userQualityPref : 'auto';
+  applyQualitySelection(qualitySelect.value, levels, false);
+}
+
+function applyQualitySelection(choice, levels = null, showToast = false) {
+  const activeLevels = levels || (hlsInstance && hlsInstance.levels) || [];
+  const npQualityEl = document.getElementById('npQuality');
+  videoPlayer.classList.remove('upscale-fhd', 'upscale-2k', 'upscale-4k');
+  if (npQualityEl) npQualityEl.classList.remove('q-ultra');
+
+  let badgeLabel = (currentChannel && currentChannel.quality) || 'HD';
+
+  if (choice === '2160p') {
+    videoPlayer.classList.add('upscale-4k');
+    if (hlsInstance && activeLevels.length > 0) {
+      hlsInstance.currentLevel = getBestLevelIndex(activeLevels, 2160);
+    }
+    badgeLabel = '4K UHD';
+    if (npQualityEl) npQualityEl.classList.add('q-ultra');
+  } else if (choice === '1440p') {
+    videoPlayer.classList.add('upscale-2k');
+    if (hlsInstance && activeLevels.length > 0) {
+      hlsInstance.currentLevel = getBestLevelIndex(activeLevels, 1440);
+    }
+    badgeLabel = '2K QHD';
+    if (npQualityEl) npQualityEl.classList.add('q-ultra');
+  } else if (choice === '1080p') {
+    videoPlayer.classList.add('upscale-fhd');
+    if (hlsInstance && activeLevels.length > 0) {
+      hlsInstance.currentLevel = getBestLevelIndex(activeLevels, 1080);
+    }
+    badgeLabel = '1080p FHD';
+  } else if (choice === '720p' || choice === '480p' || choice === '360p') {
+    const targetH = parseInt(choice, 10);
+    if (hlsInstance && activeLevels.length > 0) {
+      hlsInstance.currentLevel = getBestLevelIndex(activeLevels, targetH);
+    }
+    badgeLabel = choice;
+  } else {
+    // Auto mode: start at highest level and allow ABR with high initial estimate
+    if (hlsInstance) {
+      if (activeLevels.length > 1) {
+        const maxIdx = getBestLevelIndex(activeLevels, 1080);
+        hlsInstance.loadLevel = maxIdx;
+      }
+      hlsInstance.currentLevel = -1;
+    }
+  }
+
+  if (npQualityEl) {
+    npQualityEl.textContent = badgeLabel;
+  }
+  if (showToast) {
+    showOverlay(`Resolusi disetel ke ${badgeLabel}`, false);
+    setTimeout(hideOverlay, 1300);
+  }
 }
 
 async function playChannel(channel) {
@@ -1068,13 +1166,14 @@ async function playChannel(channel) {
     hlsInstance = null;
   }
 
-  qualitySelect.innerHTML = '<option value="-1">Auto Quality</option>';
+  populateQualityDropdown([]);
 
   if (window.Hls && Hls.isSupported()) {
     hlsInstance = new Hls({
       enableWorker: true,
       lowLatencyMode: true,
       backBufferLength: 30,
+      abrEwmaDefaultEstimate: 12000000,
       manifestLoadingTimeOut: 15000,
       manifestLoadingMaxRetry: 2,
       levelLoadingTimeOut: 15000
@@ -1121,15 +1220,7 @@ async function playChannel(channel) {
 
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
       hideOverlay();
-      if (data.levels && data.levels.length > 1) {
-        data.levels.forEach((lvl, idx) => {
-          const label = lvl.height ? `${lvl.height}p` : `Level ${idx + 1}`;
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.textContent = label;
-          qualitySelect.appendChild(opt);
-        });
-      }
+      populateQualityDropdown(data.levels || []);
       videoPlayer.play().catch(() => {
         // Autoplay with sound may be blocked by browser on first load; retry muted
         videoPlayer.muted = true;
@@ -1551,9 +1642,9 @@ function bindEvents() {
   });
 
   qualitySelect.addEventListener('change', (e) => {
-    if (hlsInstance) {
-      hlsInstance.currentLevel = parseInt(e.target.value, 10);
-    }
+    userQualityPref = e.target.value;
+    localStorage.setItem('bitstream_quality_pref', userQualityPref);
+    applyQualitySelection(userQualityPref, null, true);
   });
 
   document.getElementById('aspectBtn').addEventListener('click', () => {
