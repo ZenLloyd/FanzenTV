@@ -19,17 +19,21 @@ function ipv4Lookup(hostname, options, cb) {
   const wantAll = options && options.all;
   const reply = (ip) => (wantAll ? cb(null, [{ address: ip, family: 4 }]) : cb(null, ip, 4));
   if (/^\d+\.\d+\.\d+\.\d+$/.test(hostname)) return reply(hostname);
+  // Cache the full A-record list and pick a random edge IP per connection,
+  // so one bad CDN node never gets pinned for the whole cache window.
+  const pick = (list) => list[Math.floor(Math.random() * list.length)];
   const cached = dnsCache.get(hostname);
-  if (cached && Date.now() < cached.exp) return reply(cached.ip);
+  if (cached && Date.now() < cached.exp) return reply(pick(cached.ips));
   dns.resolve4(hostname, (err, addresses) => {
     if (!err && addresses && addresses.length) {
-      dnsCache.set(hostname, { ip: addresses[0], exp: Date.now() + 300000 });
-      return reply(addresses[0]);
+      dnsCache.set(hostname, { ips: addresses, exp: Date.now() + 60000 });
+      return reply(pick(addresses));
     }
-    dns.lookup(hostname, { family: 4 }, (e2, addr) => {
-      if (e2) return dns.lookup(hostname, options, cb);
-      dnsCache.set(hostname, { ip: addr, exp: Date.now() + 300000 });
-      reply(addr);
+    dns.lookup(hostname, { family: 4, all: true }, (e2, list) => {
+      if (e2 || !list || !list.length) return dns.lookup(hostname, options, cb);
+      const ips = list.map((x) => x.address);
+      dnsCache.set(hostname, { ips, exp: Date.now() + 60000 });
+      reply(pick(ips));
     });
   });
 }
@@ -49,7 +53,25 @@ const MIME_TYPES = {
   '.m3u8': 'application/vnd.apple.mpegurl; charset=utf-8'
 };
 
-function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 'GET', clientIp = '') {
+// Retries on a different random edge IP when the connection stalls or resets
+async function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 'GET', clientIp = '') {
+  const maxAttempts = method === 'GET' || method === 'HEAD' ? 3 : 1;
+  let lastErr;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await fetchRemoteOnce(targetUrl, customHeaders, redirectCount, method, clientIp);
+    } catch (err) {
+      lastErr = err;
+      if (!/timeout|ECONNRESET|ETIMEDOUT|EHOSTUNREACH|ECONNREFUSED|EPIPE|socket hang up/i.test(err.message)) break;
+      try {
+        dnsCache.delete(new URL(targetUrl).hostname);
+      } catch (_) {}
+    }
+  }
+  throw lastErr;
+}
+
+function fetchRemoteOnce(targetUrl, customHeaders = {}, redirectCount = 0, method = 'GET', clientIp = '') {
   return new Promise((resolve, reject) => {
     if (redirectCount > 5) {
       return reject(new Error('Too many redirects'));
@@ -90,7 +112,7 @@ function fetchRemote(targetUrl, customHeaders = {}, redirectCount = 0, method = 
       headers,
       family: 4,
       lookup: ipv4Lookup,
-      timeout: 12000,
+      timeout: 6000,
       rejectUnauthorized: false
     };
 
